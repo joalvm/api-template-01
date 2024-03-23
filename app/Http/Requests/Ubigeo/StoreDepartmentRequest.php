@@ -25,8 +25,8 @@ class StoreDepartmentRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'code' => ['required', 'string', 'size:2'],
-            'latitude' => ['nullable', 'numeric', 'required_with:longitude'],
-            'longitude' => ['nullable', 'numeric', 'required_with:latitude'],
+            'latitude' => ['filled', 'numeric', 'required_with:longitude'],
+            'longitude' => ['filled', 'numeric', 'required_with:latitude'],
         ];
     }
 }

@@ -3,12 +3,12 @@
 namespace App\Repositories;
 
 use App\Enums\Gender;
+use App\Events\DeletingPersonEvent;
 use App\Interfaces\PersonsInterface;
 use App\Models\Person;
-use App\Models\User\User;
+use Illuminate\Support\Facades\DB;
 use Joalvm\Utils\Builder;
 use Joalvm\Utils\Collection;
-use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Item;
 
 class PersonsRepository extends Repository implements PersonsInterface
@@ -61,21 +61,13 @@ class PersonsRepository extends Repository implements PersonsInterface
     {
         $model = $this->getModel($id);
 
-        /** @var User $userModel */
-        $userModel = $model->user()->first();
+        DB::beginTransaction();
 
-        // Si no tiene usuario eliminar a la person.
-        if (!$userModel) {
-            return $model->delete();
-        }
+        DeletingPersonEvent::dispatch($model, $this->user->isSuperAdmin());
 
-        if (!$this->user->isSuperAdmin() and $userModel->super_admin) {
-            throw new ForbiddenException('No tienes los permisos para eliminar a ésta persona');
-        }
+        $result = $model->delete();
 
-        if ($result = $userModel->delete()) {
-            $result = $model->delete();
-        }
+        DB::commit();
 
         return $result;
     }

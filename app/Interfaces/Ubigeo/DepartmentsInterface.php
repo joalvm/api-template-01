@@ -4,7 +4,10 @@ namespace App\Interfaces\Ubigeo;
 
 use App\Interfaces\BaseInterface;
 use App\Models\Ubigeo\Department;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Joalvm\Utils\Collection;
+use Joalvm\Utils\Exceptions\NotAcceptableException;
 use Joalvm\Utils\Item;
 
 interface DepartmentsInterface extends BaseInterface
@@ -23,6 +26,8 @@ interface DepartmentsInterface extends BaseInterface
 
     /**
      * Crea un recurso department.
+     *
+     * @throws ValidationException
      */
     public function save(array $data): Department;
 
@@ -30,6 +35,9 @@ interface DepartmentsInterface extends BaseInterface
      * Actualiza un recurso department.
      *
      * @param int $id
+     *
+     * @throws ValidationException
+     * @throws ModelNotFoundException
      */
     public function update($id, array $data): Department;
 
@@ -37,6 +45,9 @@ interface DepartmentsInterface extends BaseInterface
      * Elimina un recurso department.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
+     * @throws NotAcceptableException
      */
     public function delete($id): bool;
 
@@ -44,6 +55,8 @@ interface DepartmentsInterface extends BaseInterface
      * Obtiene el modelo del recurso department.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
      */
     public function getModel($id): Department;
 

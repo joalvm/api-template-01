@@ -6,7 +6,6 @@ use App\Components\Functions;
 use App\Exceptions\Auth\SessionDisabledException;
 use App\Exceptions\Auth\SessionNotFoundException;
 use App\Exceptions\Auth\WrongAuthException;
-use App\Exceptions\ResourceNotFoundException;
 use App\Interfaces\Users\SessionsInterface;
 use App\Interfaces\Users\UsersInterface;
 use App\Models\User\Session;
@@ -39,7 +38,7 @@ class SessionsRepository extends Repository implements SessionsInterface
         return $model;
     }
 
-    public function profile(): Item
+    public function profile(): ?Item
     {
         return Builder::table('public.persons', 'p')
             ->schema($this->profileSchema())
@@ -47,7 +46,7 @@ class SessionsRepository extends Repository implements SessionsInterface
             ->join('public.users as u', 'u.person_id', 'p.id')
             ->where('u.id', $this->user->id())
             ->whereNull(['p.deleted_at', 'u.deleted_at'])
-            ->getOne()
+            ->first()
         ;
     }
 
@@ -176,6 +175,10 @@ class SessionsRepository extends Repository implements SessionsInterface
             throw new WrongAuthException();
         }
 
+        if (!$userModel->enabled) {
+            throw new SessionDisabledException();
+        }
+
         return $userModel;
     }
 
@@ -185,12 +188,8 @@ class SessionsRepository extends Repository implements SessionsInterface
             $model = $this->usersRepository->getModelByEmail(
                 mb_strtolower($email, 'UTF-8')
             );
-        } catch (ResourceNotFoundException $ex) {
+        } catch (\Throwable $ex) {
             throw new WrongAuthException();
-        }
-
-        if (!$model->enabled) {
-            throw new SessionDisabledException();
         }
 
         return $model;

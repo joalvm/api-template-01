@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 class Handler extends ExceptionHandler
 {
     /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
+     * The list of the inputs that are never flashed to the session on validation exception.
      *
      * @var array<int, string>
      */

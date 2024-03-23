@@ -6,6 +6,7 @@ use App\Enums\Gender;
 use App\Facades\Session;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
+use Joalvm\Utils\Rules\AlphaSpaceRule;
 
 class UpdatePersonRequest extends FormRequest
 {
@@ -25,8 +26,8 @@ class UpdatePersonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'names' => ['filled', 'string', 'alpha_space'],
-            'last_names' => ['filled', 'string', 'alpha_space'],
+            'names' => ['filled', 'string', new AlphaSpaceRule()],
+            'last_names' => ['filled', 'string', new AlphaSpaceRule()],
             'gender' => ['filled', new Enum(Gender::class)],
             'document_type_id' => ['filled', 'integer'],
             'id_document' => ['filled', 'string'],

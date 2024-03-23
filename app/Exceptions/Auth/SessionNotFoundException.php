@@ -2,14 +2,13 @@
 
 namespace App\Exceptions\Auth;
 
-use App\Exceptions\HttpException;
 use Illuminate\Support\Facades\Lang;
-use Symfony\Component\HttpFoundation\Response;
+use Joalvm\Utils\Exceptions\NotFoundException;
 
-class SessionNotFoundException extends HttpException
+class SessionNotFoundException extends NotFoundException
 {
     public function __construct()
     {
-        parent::__construct(Response::HTTP_NOT_FOUND, Lang::get('api.auth.session.not_found'));
+        parent::__construct(Lang::get('exception.session.not_found'));
     }
 }

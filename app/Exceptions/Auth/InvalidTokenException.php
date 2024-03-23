@@ -2,14 +2,13 @@
 
 namespace App\Exceptions\Auth;
 
-use App\Exceptions\HttpException;
 use Illuminate\Support\Facades\Lang;
-use Symfony\Component\HttpFoundation\Response;
+use Joalvm\Utils\Exceptions\BadRequestException;
 
-class InvalidTokenException extends HttpException
+class InvalidTokenException extends BadRequestException
 {
     public function __construct()
     {
-        parent::__construct(Response::HTTP_BAD_REQUEST, Lang::get('api.auth.invalid_token'));
+        parent::__construct(Lang::get('exception.auth.invalid_token'));
     }
 }

@@ -2,14 +2,13 @@
 
 namespace App\Exceptions\Auth;
 
-use App\Exceptions\HttpException;
 use Illuminate\Support\Facades\Lang;
-use Symfony\Component\HttpFoundation\Response;
+use Joalvm\Utils\Exceptions\UnauthorizedException;
 
-class SessionDisabledException extends HttpException
+class SessionDisabledException extends UnauthorizedException
 {
     public function __construct()
     {
-        parent::__construct(Response::HTTP_UNAUTHORIZED, Lang::get('api.auth.session.disabled'));
+        parent::__construct(Lang::get('exception.session.disabled'));
     }
 }

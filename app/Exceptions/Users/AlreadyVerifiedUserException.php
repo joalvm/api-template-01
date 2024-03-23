@@ -9,6 +9,6 @@ class AlreadyVerifiedUserException extends NotAcceptableException
 {
     public function __construct()
     {
-        parent::__construct(Lang::get('exceptions.users.already_verified'));
+        parent::__construct(Lang::get('exception.users.already_verified'));
     }
 }

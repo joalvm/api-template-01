@@ -4,6 +4,8 @@ namespace App\Interfaces\Ubigeo;
 
 use App\Interfaces\BaseInterface;
 use App\Models\Ubigeo\District;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Joalvm\Utils\Collection;
 use Joalvm\Utils\Item;
 
@@ -23,6 +25,8 @@ interface DistrictsInterface extends BaseInterface
 
     /**
      * Crea un recurso district.
+     *
+     * @throws ValidationException
      */
     public function save(array $data): District;
 
@@ -30,6 +34,9 @@ interface DistrictsInterface extends BaseInterface
      * Actualiza un recurso district.
      *
      * @param int $id
+     *
+     * @throws ValidationException
+     * @throws ModelNotFoundException
      */
     public function update($id, array $data): District;
 
@@ -37,6 +44,8 @@ interface DistrictsInterface extends BaseInterface
      * Elimina un recurso district.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
      */
     public function delete($id): bool;
 
@@ -44,6 +53,8 @@ interface DistrictsInterface extends BaseInterface
      * Obtiene el modelo del recurso district.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
      */
     public function getModel($id): District;
 

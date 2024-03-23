@@ -1,21 +1,20 @@
 <?php
 
 return [
-    'resource' => [
-        'not_found' => 'The resource :name does not exist or has already been deleted',
-        'in_use' => 'The resource is assigned to another and cannot be deleted.',
+    'document_type' => [
+        'singular' => ['name' => 'document type', 'full' => 'the document type'],
+        'plural' => ['name' => 'document types', 'full' => 'the document types'],
     ],
-    'session' => [
-        'wrong' => 'Wrong email or password.',
-        'not_found' => 'No session found.',
-        'disabled' => 'Access to the platform has been disabled.',
-    ],
-    'auth' => [
-        'invalid_token' => 'The authorization token is not valid.',
-        'token_expired' => 'Authorization token has expired.',
-        'token_not_found' => 'The resource requires an authorization token.',
+    'person' => [
+        'singular' => ['name' => 'person', 'full' => 'the person'],
+        'plural' => ['name' => 'people', 'full' => 'the people'],
     ],
     'user' => [
-        'create_not_allowed' => 'You do not have permissions to create this type of user',
+        'singular' => ['name' => 'user', 'full' => 'the user'],
+        'plural' => ['name' => 'users', 'full' => 'the users'],
+    ],
+    'session' => [
+        'singular' => ['name' => 'session', 'full' => 'the session'],
+        'plural' => ['name' => 'sessions', 'full' => 'the sessions'],
     ],
 ];

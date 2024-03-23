@@ -47,7 +47,7 @@ class DistrictsRepository extends Repository implements DistrictsInterface
 
     public function all(): Collection
     {
-        return $this->builder()->all();
+        return $this->builder()->forcePaginate()->all();
     }
 
     public function find($id): ?Item

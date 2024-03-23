@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Enums\CharType;
 use App\Enums\LengthType;
-use App\Exceptions\DeletingInUseDocumentTypeException;
+use App\Exceptions\CannotDeleteDocumentTypeWithPersonsException;
 use App\Interfaces\DocumentTypesInterface;
 use App\Models\DocumentType;
 use Joalvm\Utils\Builder;
@@ -63,8 +63,8 @@ class DocumentTypesRepository extends Repository implements DocumentTypesInterfa
     {
         $model = $this->getModel($id);
 
-        if (($totalPersons = $model->persons()->count()) > 0) {
-            throw new DeletingInUseDocumentTypeException($totalPersons);
+        if (($count = $model->persons()->count()) > 0) {
+            throw new CannotDeleteDocumentTypeWithPersonsException($count);
         }
 
         return $model->delete();

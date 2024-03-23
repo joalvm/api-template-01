@@ -4,7 +4,10 @@ namespace App\Interfaces\Ubigeo;
 
 use App\Interfaces\BaseInterface;
 use App\Models\Ubigeo\Province;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Joalvm\Utils\Collection;
+use Joalvm\Utils\Exceptions\NotAcceptableException;
 use Joalvm\Utils\Item;
 
 interface ProvincesInterface extends BaseInterface
@@ -23,6 +26,8 @@ interface ProvincesInterface extends BaseInterface
 
     /**
      * Crea un recurso province.
+     *
+     * @throws ValidationException
      */
     public function save(array $data): Province;
 
@@ -30,6 +35,9 @@ interface ProvincesInterface extends BaseInterface
      * Actualiza un recurso province.
      *
      * @param int $id
+     *
+     * @throws ValidationException
+     * @throws ModelNotFoundException
      */
     public function update($id, array $data): Province;
 
@@ -37,6 +45,9 @@ interface ProvincesInterface extends BaseInterface
      * Elimina un recurso province.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
+     * @throws NotAcceptableException
      */
     public function delete($id): bool;
 
@@ -44,6 +55,8 @@ interface ProvincesInterface extends BaseInterface
      * Obtiene el modelo province.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
      */
     public function getModel($id): Province;
 

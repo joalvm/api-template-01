@@ -6,6 +6,7 @@ use App\Enums\Gender;
 use App\Facades\Session;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
+use Joalvm\Utils\Rules\AlphaSpaceRule;
 
 class StorePersonRequest extends FormRequest
 {
@@ -25,12 +26,12 @@ class StorePersonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'names' => ['required', 'string', 'alpha_space'],
-            'last_names' => ['required', 'string', 'alpha_space'],
+            'names' => ['required', 'string', new AlphaSpaceRule()],
+            'last_names' => ['required', 'string', new AlphaSpaceRule()],
             'gender' => ['required', new Enum(Gender::class)],
             'document_type_id' => ['required', 'integer'],
             'id_document' => ['required', 'string'],
-            'email' => ['nullable', 'string'],
+            'email' => ['filled', 'string'],
         ];
     }
 }

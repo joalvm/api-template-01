@@ -53,7 +53,7 @@ class DepartmentsRepository extends Repository implements DepartmentsInterface
         $model = $this->getModel($id);
 
         if ($model->provinces()->count() > 0) {
-            throw new NotAcceptableException('Existen provincias asignas');
+            throw new NotAcceptableException('Existen provincias asignadas');
         }
 
         return $model->delete();

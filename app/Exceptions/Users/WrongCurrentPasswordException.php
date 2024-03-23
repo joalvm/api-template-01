@@ -9,8 +9,6 @@ class WrongCurrentPasswordException extends NotAcceptableException
 {
     public function __construct()
     {
-        parent::__construct(
-            Lang::get('exceptions.users.wrong_current_password')
-        );
+        parent::__construct(Lang::get('exception.users.wrong_current_password'));
     }
 }

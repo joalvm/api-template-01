@@ -159,7 +159,7 @@ class User extends Model
     {
         return function ($attribute, $value, $fail) {
             if (FacadesUser::isUser()) {
-                $fail(Lang::get('api.user.create_not_allowed'));
+                $fail(Lang::get('exception.users.create_not_allowed'));
             }
         };
     }
