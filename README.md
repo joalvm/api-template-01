@@ -1,2 +1,11 @@
-# api-template-01
-Plantilla para una API laravel 10 y php 8.1
+# Template API
+
+## Comando para iniciar desarrollo
+
+```bash
+./build.sh
+```
+
+> *la credenciales son: 
+    - email: ``developer@correo.com``
+    - password:``123456789``
