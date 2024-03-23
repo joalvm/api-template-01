@@ -43,7 +43,7 @@ class Functions
      */
     protected array $bindings = [];
 
-    public function __construct(string $functionName, string $alias = null)
+    public function __construct(string $functionName, ?string $alias = null)
     {
         $name = explode('.', $functionName);
 
@@ -148,7 +148,7 @@ class Functions
         return $this;
     }
 
-    public static function call(string $functionName, string $alias = null): self
+    public static function call(string $functionName, ?string $alias = null): self
     {
         return new static($functionName, $alias);
     }

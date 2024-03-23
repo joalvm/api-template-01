@@ -32,7 +32,7 @@ class GenerateDatabaseCommand extends Command
      */
     protected $signature = 'db:generate';
 
-    protected string|null $databaseName;
+    protected ?string $databaseName;
 
     /**
      * The console command description.

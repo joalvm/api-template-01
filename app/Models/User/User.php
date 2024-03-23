@@ -2,13 +2,10 @@
 
 namespace App\Models\User;
 
-use App\Components\Model;
 use App\Enums\UserRole;
 use App\Facades\Session;
 use App\Facades\User as FacadesUser;
-use App\Models\Incidence\Attention\Attention;
-use App\Models\Incidence\Attention\Event\Event as AttentionEvent;
-use App\Models\Incidence\Attention\File;
+use App\Models\Model;
 use App\Models\Person;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,28 +18,22 @@ use Joalvm\Utils\Casts\TimestamptzCast;
 use Joalvm\Utils\Rules\TimestamptzRule;
 
 /**
- * @property      int                                   $id
- * @property      int                                   $person_id
- * @property      int|null                              $client_id
- * @property      UserRole                              $role
- * @property      string                                $email
- * @property      string                                $password
- * @property      string                                $salt
- * @property      string|null                           $avatar_url
- * @property      string|null                           $verification_token
- * @property      \Carbon\Carbon|null                   $verified_at
- * @property      string|null                           $password_reset_token
- * @property      \Carbon\Carbon|null                   $password_reset_at
- * @property      \Carbon\Carbon|null                   $login_at
- * @property      bool                                  $enabled
- * @property      bool                                  $super_admin
- * @property      Person                                $person
- * @property-read Client|null                           $client
- * @property-read Collection<array-key, Session>        $sessions
- * @property-read Collection<array-key, Client>         $clients
- * @property-read Collection<array-key, Attention>      $attentions
- * @property-read Collection<array-key, AttentionEvent> $attentionEvents
- * @property-read Collection<array-key, File>           $attentionFiles
+ * @property      int                            $id
+ * @property      int                            $person_id
+ * @property      UserRole                       $role
+ * @property      string                         $email
+ * @property      string                         $password
+ * @property      string                         $salt
+ * @property      string|null                    $avatar_url
+ * @property      string|null                    $verification_token
+ * @property      \Carbon\Carbon|null            $verified_at
+ * @property      string|null                    $password_reset_token
+ * @property      \Carbon\Carbon|null            $password_reset_at
+ * @property      \Carbon\Carbon|null            $login_at
+ * @property      bool                           $enabled
+ * @property      bool                           $super_admin
+ * @property      Person                         $person
+ * @property-read Collection<array-key, Session> $sessions
  */
 class User extends Model
 {
@@ -58,7 +49,6 @@ class User extends Model
 
     protected $fillable = [
         'person_id',
-        'client_id',
         'role',
         'email',
         'password',
@@ -81,7 +71,6 @@ class User extends Model
 
     protected $casts = [
         'person_id' => 'integer',
-        'client_id' => 'integer',
         'role' => UserRole::class,
         'verified_at' => TimestamptzCast::class,
         'password_reset_at' => TimestamptzCast::class,
@@ -97,11 +86,6 @@ class User extends Model
                 'integer',
                 $this->ruleExistsPerson(),
                 $this->ruleUniquePersonId(),
-            ],
-            'client_id' => [
-                'nullable',
-                'integer',
-                $this->ruleExistsClient(),
             ],
             'role' => [
                 'required',
@@ -136,15 +120,6 @@ class User extends Model
     {
         return function ($attribute, $value, $fail) {
             if (!$this->person()->exists()) {
-                $fail(Lang::get('validation.exists', ['attribute' => $attribute]));
-            }
-        };
-    }
-
-    private function ruleExistsClient(): \Closure
-    {
-        return function ($attribute, $value, $fail) {
-            if (null !== $value and !$this->client()->exists()) {
                 $fail(Lang::get('validation.exists', ['attribute' => $attribute]));
             }
         };

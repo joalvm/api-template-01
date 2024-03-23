@@ -3,7 +3,10 @@
 namespace App\Interfaces;
 
 use App\Models\DocumentType;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Joalvm\Utils\Collection;
+use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Item;
 
 interface DocumentTypesInterface extends BaseInterface
@@ -22,6 +25,9 @@ interface DocumentTypesInterface extends BaseInterface
 
     /**
      * Crea un recurso document_type.
+     *
+     * @throws ValidationException
+     * @throws ForbiddenException
      */
     public function save(array $data): DocumentType;
 
@@ -29,6 +35,9 @@ interface DocumentTypesInterface extends BaseInterface
      * Actualiza un recurso document_type.
      *
      * @param int $id
+     *
+     * @throws ValidationException
+     * @throws ModelNotFoundException
      */
     public function update($id, array $data): DocumentType;
 
@@ -36,6 +45,9 @@ interface DocumentTypesInterface extends BaseInterface
      * Elimina un recurso document_type.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
+     * @throws DeletingInUseDocumentTypeException
      */
     public function delete($id): bool;
 
@@ -43,6 +55,8 @@ interface DocumentTypesInterface extends BaseInterface
      * Obtiene el modelo document_type.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
      */
     public function getModel($id): DocumentType;
 

@@ -30,18 +30,18 @@ return [
     'disks' => [
         'local' => [
             'driver' => 'local',
-            'root' => \Illuminate\Support\Str::finish(
+            'root' => Illuminate\Support\Str::finish(
                 env('FILESYSTEM_ROOT', storage_path('app/media')),
                 '/'
             ),
-            'url' => \Illuminate\Support\Str::finish(env('APP_URL'), '/') . 'storage',
+            'url' => Illuminate\Support\Str::finish(env('APP_URL'), '/') . 'storage',
             'throw' => false,
         ],
 
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => \Illuminate\Support\Str::finish(env('APP_URL'), '/') . 'storage',
+            'url' => Illuminate\Support\Str::finish(env('APP_URL'), '/') . 'storage',
             'visibility' => 'public',
             'throw' => false,
         ],

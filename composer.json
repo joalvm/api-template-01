@@ -20,7 +20,8 @@
         "intervention/image": "^2.7",
         "jenssegers/agent": "^2.6",
         "joalvm/backend-utils": "^2.0",
-        "laravel/framework": "^10.10"
+        "laravel/framework": "^10.10",
+        "spatie/laravel-data": "^4.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

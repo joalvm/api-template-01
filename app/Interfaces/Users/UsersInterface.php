@@ -3,8 +3,12 @@
 namespace App\Interfaces\Users;
 
 use App\Enums\UserRole;
+use App\Exceptions\Users\AlreadyVerifiedUserException;
+use App\Exceptions\Users\WrongCurrentPasswordException;
 use App\Interfaces\BaseInterface;
 use App\Models\User\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Joalvm\Utils\Collection;
 use Joalvm\Utils\Item;
 
@@ -29,6 +33,9 @@ interface UsersInterface extends BaseInterface
 
     /**
      * Crea un nuevo recurso user.
+     *
+     * @throws ValidationException
+     * @throws AlreadyVerifiedUserException
      */
     public function save(array $data): User;
 
@@ -36,6 +43,10 @@ interface UsersInterface extends BaseInterface
      * Actualiza un recurso user.
      *
      * @param int $id
+     *
+     * @throws ValidationException
+     * @throws ModelNotFoundException
+     * @throws WrongCurrentPasswordException
      */
     public function update($id, array $data): User;
 
@@ -43,6 +54,8 @@ interface UsersInterface extends BaseInterface
      * Elimina un recurso user.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
      */
     public function delete($id): bool;
 
@@ -50,16 +63,22 @@ interface UsersInterface extends BaseInterface
      * Obtiene el modelo del repsoitorio.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
      */
     public function getModel($id): User;
 
     /**
      * Obtiene el modelo del repositorio usando un id de persona.
+     *
+     * @throws ModelNotFoundException
      */
     public function getModelByPerson(int $personId): User;
 
     /**
      * Obtiene el modelo del repositorio usando la columna email.
+     *
+     * @throws ModelNotFoundException
      */
     public function getModelByEmail(string $email): User;
 
@@ -74,13 +93,6 @@ interface UsersInterface extends BaseInterface
      * @param int[]|null $persons
      */
     public function setPersons($persons): static;
-
-    /**
-     * Establece el filtro por clientes.
-     *
-     * @param int[]|null $clients
-     */
-    public function setClients($clients): static;
 
     /**
      * Establece el filtro por tipos de usuarios.

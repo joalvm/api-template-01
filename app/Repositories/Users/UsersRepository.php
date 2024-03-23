@@ -2,9 +2,7 @@
 
 namespace App\Repositories\Users;
 
-use App\Components\JWT;
 use App\Enums\UserRole;
-use App\Exceptions\ResourceNotFoundException;
 use App\Exceptions\Users\AlreadyVerifiedUserException;
 use App\Exceptions\Users\WrongCurrentPasswordException;
 use App\Interfaces\PersonsInterface;
@@ -19,6 +17,7 @@ use Illuminate\Support\Str;
 use Joalvm\Utils\Builder;
 use Joalvm\Utils\Collection;
 use Joalvm\Utils\Item;
+use Joalvm\Utils\JWT;
 
 class UsersRepository extends Repository implements UsersInterface
 {
@@ -31,11 +30,6 @@ class UsersRepository extends Repository implements UsersInterface
      * @var UserRole[]
      */
     private array $roles = [];
-
-    /**
-     * @var int[]
-     */
-    private array $clients = [];
 
     public function __construct(
         public User $model,
@@ -128,13 +122,12 @@ class UsersRepository extends Repository implements UsersInterface
     {
         $model = $this->getModel($id);
 
-        DB::beginTransaction();
-
         if ($result = $model->delete()) {
-            $model->clients()->delete();
+            $model
+                ->sessions()
+                ->where('closed_at', null)
+                ->update(['closed_at' => Carbon::now()]);
         }
-
-        DB::commit();
 
         return $result;
     }
@@ -146,24 +139,18 @@ class UsersRepository extends Repository implements UsersInterface
 
     public function getModelByPerson(int $personId): User
     {
-        $model = $this->model->newQuery()->where('person_id', $personId)->first();
-
-        if (!$model) {
-            throw new ResourceNotFoundException('User');
-        }
-
-        return $model;
+        return $this->model
+            ->newQuery()
+            ->where('person_id', $personId)
+            ->firstOrFail();
     }
 
     public function getModelByEmail(string $email): User
     {
-        $model = $this->model->newQuery()->where('email', $email)->first();
-
-        if (!$model) {
-            throw new ResourceNotFoundException('User');
-        }
-
-        return $model;
+        return $this->model
+            ->newQuery()
+            ->where('email', $email)
+            ->firstOrFail();
     }
 
     public function getAuthData(int $userId): array
@@ -199,13 +186,6 @@ class UsersRepository extends Repository implements UsersInterface
         return $this;
     }
 
-    public function setClients($clients): static
-    {
-        $this->clients = to_list_int($clients);
-
-        return $this;
-    }
-
     public function isValidPassword(User $model, string $password): bool
     {
         return Hash::check(
@@ -218,7 +198,7 @@ class UsersRepository extends Repository implements UsersInterface
     private function changePasswordIfCurrentIsValid(
         User &$model,
         string $currentPassword,
-        string $newPassword = null
+        ?string $newPassword = null
     ): void {
         if (!$this->isValidPassword($model, $currentPassword)) {
             throw new WrongCurrentPasswordException();
@@ -236,7 +216,7 @@ class UsersRepository extends Repository implements UsersInterface
      *
      * @return array<string>
      */
-    private function encryptPassword(string $password = null): array
+    private function encryptPassword(?string $password = null): array
     {
         $password = $password ?: User::DEFAULT_PASSWORD;
         $salt = Str::random();

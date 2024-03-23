@@ -34,7 +34,7 @@ class PersonsRepository extends Repository implements PersonsInterface
         return $this->builder()->all();
     }
 
-    public function find($id): Item
+    public function find($id): ?Item
     {
         return $this->builder()->find($id);
     }
@@ -95,7 +95,7 @@ class PersonsRepository extends Repository implements PersonsInterface
     public function setGender($gender): static
     {
         if (Gender::has($gender)) {
-            $this->gender = $gender;
+            $this->gender = Gender::get($gender);
         }
 
         return $this;
@@ -124,7 +124,7 @@ class PersonsRepository extends Repository implements PersonsInterface
         }
 
         if ($this->gender) {
-            $builder->where('p.gender', $this->gender);
+            $builder->where('p.gender', $this->gender->value);
         }
 
         return $builder;

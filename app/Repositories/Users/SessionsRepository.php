@@ -3,7 +3,6 @@
 namespace App\Repositories\Users;
 
 use App\Components\Functions;
-use App\Components\JWT;
 use App\Exceptions\Auth\SessionDisabledException;
 use App\Exceptions\Auth\SessionNotFoundException;
 use App\Exceptions\Auth\WrongAuthException;
@@ -21,6 +20,7 @@ use Jenssegers\Agent\Agent;
 use Joalvm\Utils\Builder;
 use Joalvm\Utils\Exceptions\UnauthorizedException;
 use Joalvm\Utils\Item;
+use Joalvm\Utils\JWT;
 
 class SessionsRepository extends Repository implements SessionsInterface
 {
@@ -47,9 +47,6 @@ class SessionsRepository extends Repository implements SessionsInterface
             ->join('public.users as u', 'u.person_id', 'p.id')
             ->where('u.id', $this->user->id())
             ->whereNull(['p.deleted_at', 'u.deleted_at'])
-            ->casts(function (Item $item) {
-                $item->jsonValues(['clients']);
-            })
             ->getOne()
         ;
     }
@@ -102,6 +99,8 @@ class SessionsRepository extends Repository implements SessionsInterface
 
     private function getSessionData(array $data, int $userId): array
     {
+        // @todo Quitar el uso de la funcion request(), el repositorio
+        // debe ser independiente de la petición.
         $agent = new Agent(request()->headers->all(), request()->userAgent());
         $now = Carbon::now();
 
@@ -132,11 +131,10 @@ class SessionsRepository extends Repository implements SessionsInterface
             'rol' => $userModel->role,
         ];
 
-        if ($userModel->client_id) {
-            $payload['cli'] = $userModel->client_id;
-        }
-
-        $encoded = JWT::encode($payload, $sessionModel->expire_at);
+        $encoded = JWT::encode(
+            $payload,
+            $sessionModel->expire_at->diffInMinutes(Carbon::now())
+        );
 
         $sessionModel->setAttribute('token', $encoded[0]);
 

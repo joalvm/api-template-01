@@ -3,6 +3,8 @@
 namespace App\Interfaces;
 
 use App\Models\Person;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Joalvm\Utils\Collection;
 use Joalvm\Utils\Item;
 
@@ -18,10 +20,12 @@ interface PersonsInterface extends BaseInterface
      *
      * @param int $id
      */
-    public function find($id): Item;
+    public function find($id): ?Item;
 
     /**
      * Crea un nuevo recurso person.
+     *
+     * @throws ValidationException
      */
     public function save(array $data): Person;
 
@@ -29,6 +33,9 @@ interface PersonsInterface extends BaseInterface
      * Actualiza un recurso person.
      *
      * @param int $id
+     *
+     * @throws ValidationException
+     * @throws ModelNotFoundException
      */
     public function update($id, array $data): Person;
 
@@ -36,6 +43,8 @@ interface PersonsInterface extends BaseInterface
      * Elimina un recurso person.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
      */
     public function delete($id): bool;
 
@@ -43,6 +52,8 @@ interface PersonsInterface extends BaseInterface
      * Obtiene el modelo person.
      *
      * @param int $id
+     *
+     * @throws ModelNotFoundException
      */
     public function getModel($id): Person;
 

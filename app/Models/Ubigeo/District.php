@@ -2,26 +2,20 @@
 
 namespace App\Models\Ubigeo;
 
-use App\Components\Model;
-use App\Models\Client\Collaborator;
-use App\Models\Incidence\Attention\Attention;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Lang;
 
 /**
- * @property      int                                 $id
- * @property      int                                 $province_id
- * @property      string                              $name
- * @property      string                              $code
- * @property      float|null                          $latitude
- * @property      float|null                          $longitude
- * @property-read Province                            $province
- * @property-read Collection<array-key, Collaborator> $collaborators
- * @property-read Collection<array-key, Attention>    $attentions
+ * @property      int        $id
+ * @property      int        $province_id
+ * @property      string     $name
+ * @property      string     $code
+ * @property      float|null $latitude
+ * @property      float|null $longitude
+ * @property-read Province   $province
  */
 class District extends Model
 {

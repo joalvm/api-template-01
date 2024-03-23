@@ -153,7 +153,6 @@ return [
     | specify a specific custom language line for a given attribute rule.
     |
     */
-    'unique_client_per_user_admin_or_basic' => 'Users of type \'administrator\' and \'basic\' can only have one assigned client.',
 
     'custom' => [
         'attribute-name' => [

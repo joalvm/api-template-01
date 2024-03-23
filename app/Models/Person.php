@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use App\Components\Model;
 use App\Enums\Gender;
-use App\Models\Client\Collaborator;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +21,6 @@ use Illuminate\Validation\Rules\Enum;
  * @property      string|null  $email
  * @property-read DocumentType $documentType
  * @property-read User         $user
- * @property-read Collaborator $collaborator
  */
 class Person extends Model
 {

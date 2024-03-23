@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Components\Model;
 use App\Enums\CharType;
 use App\Enums\LengthType;
 use Illuminate\Database\Eloquent\Collection;
