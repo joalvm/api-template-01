@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Components\JWT;
 use App\Exceptions\Auth\InvalidTokenException;
 use App\Exceptions\Auth\TokenExpiredException;
 use App\Exceptions\Auth\TokenNotFoundException;
@@ -11,6 +10,7 @@ use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\SignatureInvalidException;
 use Illuminate\Http\Request;
+use Joalvm\Utils\JWT;
 
 class Authenticate
 {
