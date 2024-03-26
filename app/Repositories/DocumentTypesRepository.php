@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\DataObjects\Repositories\CreateDocumentTypeData;
+use App\DataObjects\Repositories\UpdateDocumentTypeData;
 use App\Enums\CharType;
 use App\Enums\LengthType;
 use App\Exceptions\CannotDeleteDocumentTypeWithPersonsException;
@@ -9,7 +11,6 @@ use App\Interfaces\DocumentTypesInterface;
 use App\Models\DocumentType;
 use Joalvm\Utils\Builder;
 use Joalvm\Utils\Collection;
-use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Item;
 
 class DocumentTypesRepository extends Repository implements DocumentTypesInterface
@@ -35,24 +36,20 @@ class DocumentTypesRepository extends Repository implements DocumentTypesInterfa
         return $this->builder()->find($id);
     }
 
-    public function save(array $data): DocumentType
+    public function save(CreateDocumentTypeData $data): DocumentType
     {
-        if (!$this->user->isSuperAdmin()) {
-            throw new ForbiddenException();
-        }
-
-        $model = $this->model->newInstance($data);
+        $model = $this->model->newInstance($data->all());
 
         $model->validate()->save();
 
         return $model;
     }
 
-    public function update($id, array $data): DocumentType
+    public function update($id, UpdateDocumentTypeData $data): DocumentType
     {
         $model = $this->getModel($id);
 
-        $model->fill($data);
+        $model->fill($data->all());
 
         $model->validate()->update();
 

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Ubigeo;
 
-use App\Facades\Session;
+use App\DataObjects\Repositories\Ubigeo\CreateProvinceData;
+use App\DataObjects\Repositories\Ubigeo\UpdateProvinceData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Ubigeo\StoreProvinceRequest;
 use App\Http\Requests\Ubigeo\UpdateProvinceRequest;
 use App\Interfaces\Ubigeo\ProvincesInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Facades\Response;
 
 class ProvincesController extends Controller
@@ -31,13 +31,11 @@ class ProvincesController extends Controller
 
     public function store(StoreProvinceRequest $request): JsonResponse
     {
-        if (!Session::isSuperAdmin() and !Session::isCoordinator()) {
-            throw new ForbiddenException();
-        }
+        $data = CreateProvinceData::from($request->post());
 
         return Response::stored(
             $this->repository->find(
-                $this->repository->save($request->all())->id
+                $this->repository->save($data)->id
             )
         );
     }
@@ -49,23 +47,17 @@ class ProvincesController extends Controller
 
     public function update($id, UpdateProvinceRequest $request): JsonResponse
     {
-        if (!Session::isSuperAdmin()) {
-            throw new ForbiddenException();
-        }
+        $data = UpdateProvinceData::from($request->post());
 
         return Response::updated(
             $this->repository->find(
-                $this->repository->update($id, $request->all())->id
+                $this->repository->update($id, $data)->id
             )
         );
     }
 
     public function destroy($id): JsonResponse
     {
-        if (!Session::isSuperAdmin()) {
-            throw new ForbiddenException();
-        }
-
         return Response::destroyed($this->repository->delete($id));
     }
 }

@@ -17,4 +17,16 @@ return [
         'singular' => ['name' => 'session', 'full' => 'the session'],
         'plural' => ['name' => 'sessions', 'full' => 'the sessions'],
     ],
+    'department' => [
+        'singular' => ['name' => 'department', 'full' => 'the department'],
+        'plural' => ['name' => 'departments', 'full' => 'the departments'],
+    ],
+    'province' => [
+        'singular' => ['name' => 'province', 'full' => 'the province'],
+        'plural' => ['name' => 'provinces', 'full' => 'the provinces'],
+    ],
+    'district' => [
+        'singular' => ['name' => 'district', 'full' => 'the district'],
+        'plural' => ['name' => 'districts', 'full' => 'the districts'],
+    ],
 ];

@@ -9,10 +9,10 @@ if (!function_exists('singular_name')) {
     function singular_name(string $key, bool $withArticle = false): string
     {
         if ($withArticle) {
-            return Lang::get("api.$key.singular.full");
+            return Lang::get("api.{$key}.singular.full");
         }
 
-        return Lang::get("api.$key.singular.name");
+        return Lang::get("api.{$key}.singular.name");
     }
 }
 
@@ -23,10 +23,10 @@ if (!function_exists('plural_name')) {
     function plural_name(string $key, bool $withArticle = false): string
     {
         if ($withArticle) {
-            return Lang::get("api.$key.plural.full");
+            return Lang::get("api.{$key}.plural.full");
         }
 
-        return Lang::get("api.$key.plural.name");
+        return Lang::get("api.{$key}.plural.name");
     }
 }
 
@@ -45,5 +45,15 @@ if (!function_exists('resource_name')) {
         }
 
         return Lang::choice(plural_name($key), $count);
+    }
+}
+
+if (!function_exists('is_optional')) {
+    /**
+     * Check if a value is optional from Data Transfer Object.
+     */
+    function is_optional(mixed $value): bool
+    {
+        return $value instanceof Spatie\LaravelData\Optional;
     }
 }

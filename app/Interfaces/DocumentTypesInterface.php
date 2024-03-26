@@ -2,6 +2,8 @@
 
 namespace App\Interfaces;
 
+use App\DataObjects\Repositories\CreateDocumentTypeData;
+use App\DataObjects\Repositories\UpdateDocumentTypeData;
 use App\Models\DocumentType;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -29,7 +31,7 @@ interface DocumentTypesInterface extends BaseInterface
      * @throws ValidationException
      * @throws ForbiddenException
      */
-    public function save(array $data): DocumentType;
+    public function save(CreateDocumentTypeData $data): DocumentType;
 
     /**
      * Actualiza un recurso document_type.
@@ -39,7 +41,7 @@ interface DocumentTypesInterface extends BaseInterface
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function update($id, array $data): DocumentType;
+    public function update($id, UpdateDocumentTypeData $data): DocumentType;
 
     /**
      * Elimina un recurso document_type.

@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Ubigeo;
 
+use App\DataObjects\Repositories\Ubigeo\CreateDistrictData;
+use App\DataObjects\Repositories\Ubigeo\UpdateDistrictData;
 use App\Interfaces\Ubigeo\DistrictsInterface;
 use App\Models\Ubigeo\District;
 use App\Repositories\Repository;
@@ -55,20 +57,20 @@ class DistrictsRepository extends Repository implements DistrictsInterface
         return $this->builder()->find($id);
     }
 
-    public function save(array $data): District
+    public function save(CreateDistrictData $data): District
     {
-        $model = $this->model->newInstance($data);
+        $model = $this->model->newInstance($data->all());
 
         $model->validate()->save();
 
         return $model;
     }
 
-    public function update($id, array $data): District
+    public function update($id, UpdateDistrictData $data): District
     {
         $model = $this->getModel($id);
 
-        $model->fill($data);
+        $model->fill($data->all());
 
         $model->validate()->update();
 

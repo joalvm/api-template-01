@@ -2,6 +2,8 @@
 
 namespace App\Interfaces\Ubigeo;
 
+use App\DataObjects\Repositories\Ubigeo\CreateDistrictData;
+use App\DataObjects\Repositories\Ubigeo\UpdateDistrictData;
 use App\Interfaces\BaseInterface;
 use App\Models\Ubigeo\District;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -28,7 +30,7 @@ interface DistrictsInterface extends BaseInterface
      *
      * @throws ValidationException
      */
-    public function save(array $data): District;
+    public function save(CreateDistrictData $data): District;
 
     /**
      * Actualiza un recurso district.
@@ -38,7 +40,7 @@ interface DistrictsInterface extends BaseInterface
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function update($id, array $data): District;
+    public function update($id, UpdateDistrictData $data): District;
 
     /**
      * Elimina un recurso district.

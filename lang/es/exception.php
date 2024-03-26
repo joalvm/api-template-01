@@ -9,6 +9,7 @@ return [
         'already_verified' => 'El usuario ya se encuentra verificado.',
         'create_not_allowed' => 'No Tiene permisos para crear este tipo de usuario',
         'cannot_delete_super_admin' => 'No puedes eliminar a este tipo de usuario.',
+        'cannot_delete_self_user' => 'No puedes eliminar tu propia cuenta.',
     ],
     'session' => [
         'wrong' => 'Email o Contraseña incorrectos.',

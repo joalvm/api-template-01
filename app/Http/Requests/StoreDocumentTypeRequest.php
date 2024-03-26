@@ -6,7 +6,7 @@ use App\Enums\CharType;
 use App\Enums\LengthType;
 use App\Facades\Session;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rule;
 
 class StoreDocumentTypeRequest extends FormRequest
 {
@@ -15,7 +15,7 @@ class StoreDocumentTypeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Session::isLogged();
+        return Session::isAuthenticated();
     }
 
     /**
@@ -28,9 +28,9 @@ class StoreDocumentTypeRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'abbr' => ['required', 'string'],
-            'length_type' => ['required', new Enum(LengthType::class)],
+            'length_type' => ['required', Rule::in(LengthType::values())],
             'length' => ['required', 'integer', 'min:1', 'max:' . PHP_INT_MAX],
-            'char_type' => ['required', new Enum(CharType::class)],
+            'char_type' => ['required', Rule::in(CharType::values())],
         ];
     }
 }

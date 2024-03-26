@@ -46,8 +46,8 @@ class District extends Model
                 'integer',
                 $this->ruleExistsProvince(),
             ],
-            'name' => ['required', 'string'],
-            'code' => ['required', 'string', 'size:6'],
+            'name' => ['required', 'string', $this->ruleUniqueNamePerProvince()],
+            'code' => ['required', 'string', 'size:6', $this->ruleUniqueCode()],
             'latitude' => ['nullable', 'numeric', 'required_with:longitude'],
             'longitude' => ['nullable', 'numeric', 'required_with:latitude'],
         ];
@@ -65,6 +65,39 @@ class District extends Model
 
             if (!$query->exists()) {
                 $fail(Lang::get('validation.exists', ['attribute' => $attribute]));
+            }
+        };
+    }
+
+    private function ruleUniqueCode(): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail) {
+            $query = $this->newQuery()->where('code', $value);
+
+            if ($this->exists) {
+                $query->where('id', '<>', $this->getAttribute('id'));
+            }
+
+            if ($query->exists()) {
+                $fail(Lang::get('validation.unique', ['attribute' => $attribute]));
+            }
+        };
+    }
+
+    private function ruleUniqueNamePerProvince(): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail) {
+            $query = $this->newQuery()
+                ->where('province_id', $this->getAttribute('province_id'))
+                ->where('name', $value)
+            ;
+
+            if ($this->exists) {
+                $query->where('id', '<>', $this->getAttribute('id'));
+            }
+
+            if ($query->exists()) {
+                $fail(Lang::get('validation.unique', ['attribute' => $attribute]));
             }
         };
     }

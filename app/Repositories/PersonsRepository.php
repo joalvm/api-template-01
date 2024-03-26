@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\DataObjects\Repositories\CreatePersonData;
+use App\DataObjects\Repositories\UpdatePersonData;
 use App\Enums\Gender;
 use App\Events\DeletingPersonEvent;
 use App\Interfaces\PersonsInterface;
@@ -39,18 +41,18 @@ class PersonsRepository extends Repository implements PersonsInterface
         return $this->builder()->find($id);
     }
 
-    public function save(array $data): Person
+    public function save(CreatePersonData $data): Person
     {
-        $model = $this->model->newInstance($data);
+        $model = $this->model->newInstance($data->all());
 
         $model->validate()->save();
 
         return $model;
     }
 
-    public function update($id, array $data): Person
+    public function update($id, UpdatePersonData $data): Person
     {
-        $model = $this->getModel($id)->fill($data);
+        $model = $this->getModel($id)->fill($data->all());
 
         $model->validate()->update();
 

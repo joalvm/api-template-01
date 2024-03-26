@@ -2,6 +2,8 @@
 
 namespace App\Interfaces\Ubigeo;
 
+use App\DataObjects\Repositories\Ubigeo\CreateDepartmentData;
+use App\DataObjects\Repositories\Ubigeo\UpdateDepartmentData;
 use App\Interfaces\BaseInterface;
 use App\Models\Ubigeo\Department;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -29,7 +31,7 @@ interface DepartmentsInterface extends BaseInterface
      *
      * @throws ValidationException
      */
-    public function save(array $data): Department;
+    public function save(CreateDepartmentData $data): Department;
 
     /**
      * Actualiza un recurso department.
@@ -39,7 +41,7 @@ interface DepartmentsInterface extends BaseInterface
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function update($id, array $data): Department;
+    public function update($id, UpdateDepartmentData $data): Department;
 
     /**
      * Elimina un recurso department.

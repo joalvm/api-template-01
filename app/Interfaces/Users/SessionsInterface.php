@@ -2,6 +2,8 @@
 
 namespace App\Interfaces\Users;
 
+use App\DataObjects\Repositories\Users\CreateSessionData;
+use App\DataObjects\Repositories\Users\LoginSessionData;
 use App\Exceptions\Auth\SessionDisabledException;
 use App\Exceptions\Auth\SessionNotFoundException;
 use App\Exceptions\Auth\WrongAuthException;
@@ -18,7 +20,7 @@ interface SessionsInterface extends BaseInterface
      *
      * @throws ValidationException
      */
-    public function save(array $data): Session;
+    public function save(CreateSessionData $data): Session;
 
     /**
      * Obtiene el profile del usuario.
@@ -31,7 +33,7 @@ interface SessionsInterface extends BaseInterface
      * @throws WrongAuthException
      * @throws SessionDisabledException
      */
-    public function login(array $data, bool $validatePassword = true): Item;
+    public function login(LoginSessionData $data, bool $validatePassword = true): Item;
 
     /**
      * Cierra la sessión activa.

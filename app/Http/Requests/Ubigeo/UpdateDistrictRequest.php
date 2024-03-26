@@ -12,7 +12,7 @@ class UpdateDistrictRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Session::isLogged();
+        return Session::isAuthenticated();
     }
 
     /**

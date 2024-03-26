@@ -2,9 +2,11 @@
 
 namespace App\Enums;
 
+use Joalvm\Utils\Traits\ExtendsEnums;
+
 enum UserRole: string
 {
-    use Enum;
+    use ExtendsEnums;
 
     // Usuario del cliente.
     case ADMIN = 'ADMIN';

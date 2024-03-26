@@ -3,6 +3,9 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
+use Symfony\Component\HttpFoundation\Response;
 
 class AcceptedLangHandler
 {
@@ -23,18 +26,25 @@ class AcceptedLangHandler
      */
     public function handle(Request $request, \Closure $next)
     {
-        $langs = to_list($request->header('accept-language'));
+        App::setLocale($this->getLanguage($request->getLanguages()));
 
-        $langs[] = self::DEFAULT_LOCALE;
+        return $this->setHeader($next($request));
+    }
 
-        foreach ($langs as $lang) {
-            if (in_array($lang, self::ALLOWED_LOCALES)) {
-                app()->setLocale($lang);
+    private function setHeader(Response $response)
+    {
+        $languages = implode(', ', self::ALLOWED_LOCALES);
 
-                break;
-            }
-        }
+        $response->headers->set('Content-Language', $languages);
 
-        return $next($request);
+        return $response;
+    }
+
+    private function getLanguage(array $languages): string
+    {
+        return Arr::first(
+            $languages,
+            fn ($value) => in_array($value, self::ALLOWED_LOCALES)
+        ) ?? self::DEFAULT_LOCALE;
     }
 }

@@ -15,7 +15,7 @@ class SessionManager
 
     private UserRole $userRole;
 
-    private bool $isLogged = false;
+    private bool $isAuthenticated = false;
 
     public function authenticate(int $sessionId): void
     {
@@ -34,7 +34,7 @@ class SessionManager
         $this->userRole = User::role();
 
         if ($this->session->get('id')) {
-            $this->isLogged = true;
+            $this->isAuthenticated = true;
         }
     }
 
@@ -58,9 +58,9 @@ class SessionManager
         return $this->userRole;
     }
 
-    public function isLogged(): bool
+    public function isAuthenticated(): bool
     {
-        return $this->isLogged;
+        return $this->isAuthenticated;
     }
 
     public function isAdmin(): bool

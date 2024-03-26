@@ -2,12 +2,14 @@
 
 namespace App\Repositories\Ubigeo;
 
+use App\DataObjects\Repositories\Ubigeo\CreateDepartmentData;
+use App\DataObjects\Repositories\Ubigeo\UpdateDepartmentData;
+use App\Exceptions\Ubigeo\CannotDeleteDepartmentWithProvincesException;
 use App\Interfaces\Ubigeo\DepartmentsInterface;
 use App\Models\Ubigeo\Department;
 use App\Repositories\Repository;
 use Joalvm\Utils\Builder;
 use Joalvm\Utils\Collection;
-use Joalvm\Utils\Exceptions\NotAcceptableException;
 use Joalvm\Utils\Item;
 
 class DepartmentsRepository extends Repository implements DepartmentsInterface
@@ -28,20 +30,20 @@ class DepartmentsRepository extends Repository implements DepartmentsInterface
         return $this->builder()->find($id);
     }
 
-    public function save(array $data): Department
+    public function save(CreateDepartmentData $data): Department
     {
-        $model = $this->model->newInstance($data);
+        $model = $this->model->newInstance($data->all());
 
         $model->validate()->save();
 
         return $model;
     }
 
-    public function update($id, array $data): Department
+    public function update($id, UpdateDepartmentData $data): Department
     {
         $model = $this->getModel($id);
 
-        $model->fill($data);
+        $model->fill($data->all());
 
         $model->validate()->update();
 
@@ -52,8 +54,8 @@ class DepartmentsRepository extends Repository implements DepartmentsInterface
     {
         $model = $this->getModel($id);
 
-        if ($model->provinces()->count() > 0) {
-            throw new NotAcceptableException('Existen provincias asignadas');
+        if (($count = $model->provinces()->count()) > 0) {
+            throw new CannotDeleteDepartmentWithProvincesException($count);
         }
 
         return $model->delete();

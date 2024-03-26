@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Ubigeo;
 
-use App\Facades\Session;
+use App\DataObjects\Repositories\Ubigeo\CreateDepartmentData;
+use App\DataObjects\Repositories\Ubigeo\UpdateDepartmentData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Ubigeo\StoreDepartmentRequest;
 use App\Http\Requests\Ubigeo\UpdateDepartmentRequest;
 use App\Interfaces\Ubigeo\DepartmentsInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Facades\Response;
 
 class DepartmentsController extends Controller
@@ -29,13 +29,11 @@ class DepartmentsController extends Controller
 
     public function store(StoreDepartmentRequest $request): JsonResponse
     {
-        if (!Session::isSuperAdmin()) {
-            throw new ForbiddenException();
-        }
+        $data = CreateDepartmentData::from($request->post());
 
         return Response::stored(
             $this->repository->find(
-                $this->repository->save($request->all())->id
+                $this->repository->save($data)->id
             )
         );
     }
@@ -47,23 +45,17 @@ class DepartmentsController extends Controller
 
     public function update($id, UpdateDepartmentRequest $request): JsonResponse
     {
-        if (!Session::isSuperAdmin()) {
-            throw new ForbiddenException();
-        }
+        $data = UpdateDepartmentData::from($request->post());
 
         return Response::updated(
             $this->repository->find(
-                $this->repository->update($id, $request->all())->id
+                $this->repository->update($id, $data)->id
             )
         );
     }
 
     public function destroy($id): JsonResponse
     {
-        if (!Session::isSuperAdmin()) {
-            throw new ForbiddenException();
-        }
-
         return Response::destroyed($this->repository->delete($id));
     }
 }

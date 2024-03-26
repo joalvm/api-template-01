@@ -2,9 +2,11 @@
 
 namespace App\Enums;
 
+use Joalvm\Utils\Traits\ExtendsEnums;
+
 enum CharType: string
 {
-    use Enum;
+    use ExtendsEnums;
 
     case NUMERIC = 'NUMERIC';
 

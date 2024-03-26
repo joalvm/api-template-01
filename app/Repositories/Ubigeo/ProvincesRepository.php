@@ -2,12 +2,14 @@
 
 namespace App\Repositories\Ubigeo;
 
+use App\DataObjects\Repositories\Ubigeo\CreateProvinceData;
+use App\DataObjects\Repositories\Ubigeo\UpdateProvinceData;
+use App\Exceptions\Ubigeo\CannotDeleteProvinceWithDistrictsException;
 use App\Interfaces\Ubigeo\ProvincesInterface;
 use App\Models\Ubigeo\Province;
 use App\Repositories\Repository;
 use Joalvm\Utils\Builder;
 use Joalvm\Utils\Collection;
-use Joalvm\Utils\Exceptions\NotAcceptableException;
 use Joalvm\Utils\Item;
 
 class ProvincesRepository extends Repository implements ProvincesInterface
@@ -41,20 +43,20 @@ class ProvincesRepository extends Repository implements ProvincesInterface
         return $this->builder()->find($id);
     }
 
-    public function save(array $data): Province
+    public function save(CreateProvinceData $data): Province
     {
-        $model = $this->model->newInstance($data);
+        $model = $this->model->newInstance($data->all());
 
         $model->validate()->save();
 
         return $model;
     }
 
-    public function update($id, array $data): Province
+    public function update($id, UpdateProvinceData $data): Province
     {
         $model = $this->getModel($id);
 
-        $model->fill($data);
+        $model->fill($data->all());
 
         $model->validate()->update();
 
@@ -65,8 +67,8 @@ class ProvincesRepository extends Repository implements ProvincesInterface
     {
         $model = $this->getModel($id);
 
-        if ($model->districts()->count() > 0) {
-            throw new NotAcceptableException('Existen distritos asignados');
+        if (($count = $model->districts()->count()) > 0) {
+            throw new CannotDeleteProvinceWithDistrictsException($count);
         }
 
         return $model->delete();

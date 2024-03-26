@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\Gender;
 use App\Facades\Session;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rule;
 use Joalvm\Utils\Rules\AlphaSpaceRule;
 
 class StorePersonRequest extends FormRequest
@@ -15,7 +15,7 @@ class StorePersonRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Session::isLogged();
+        return Session::isAuthenticated();
     }
 
     /**
@@ -28,7 +28,7 @@ class StorePersonRequest extends FormRequest
         return [
             'names' => ['required', 'string', new AlphaSpaceRule()],
             'last_names' => ['required', 'string', new AlphaSpaceRule()],
-            'gender' => ['required', new Enum(Gender::class)],
+            'gender' => ['required', Rule::in(Gender::values())],
             'document_type_id' => ['required', 'integer'],
             'id_document' => ['required', 'string'],
             'email' => ['filled', 'string'],

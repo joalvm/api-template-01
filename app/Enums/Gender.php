@@ -2,9 +2,11 @@
 
 namespace App\Enums;
 
+use Joalvm\Utils\Traits\ExtendsEnums;
+
 enum Gender: string
 {
-    use Enum;
+    use ExtendsEnums;
 
     case FEMALE = 'FEMALE';
 

@@ -5,7 +5,7 @@ namespace App\Http\Requests\Users;
 use App\Enums\UserRole;
 use App\Facades\Session;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -14,7 +14,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Session::isLogged();
+        return Session::isAuthenticated();
     }
 
     /**
@@ -25,13 +25,14 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'role' => ['filled', new Enum(UserRole::class)],
+            'role' => ['filled', Rule::in(UserRole::values())],
             'avatar_url' => ['nullable', 'string'],
             'email' => ['filled', 'email'],
             'password' => ['filled', 'string', 'min:8'],
             'current_password' => ['required_with:password', 'string', 'min:8'],
             'confirm_password' => ['required_with:password', 'same:password'],
             'enabled' => ['filled', 'boolean'],
+            'redirect_url' => ['filled', 'string'],
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Interfaces;
 
+use App\DataObjects\Repositories\CreatePersonData;
+use App\DataObjects\Repositories\UpdatePersonData;
 use App\Models\Person;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -27,7 +29,7 @@ interface PersonsInterface extends BaseInterface
      *
      * @throws ValidationException
      */
-    public function save(array $data): Person;
+    public function save(CreatePersonData $data): Person;
 
     /**
      * Actualiza un recurso person.
@@ -37,7 +39,7 @@ interface PersonsInterface extends BaseInterface
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function update($id, array $data): Person;
+    public function update($id, UpdatePersonData $data): Person;
 
     /**
      * Elimina un recurso person.

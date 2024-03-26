@@ -3,6 +3,8 @@
 namespace App\Repositories\Users;
 
 use App\Components\Functions;
+use App\DataObjects\Repositories\Users\CreateSessionData;
+use App\DataObjects\Repositories\Users\LoginSessionData;
 use App\Exceptions\Auth\SessionDisabledException;
 use App\Exceptions\Auth\SessionNotFoundException;
 use App\Exceptions\Auth\WrongAuthException;
@@ -12,10 +14,9 @@ use App\Models\User\Session;
 use App\Models\User\User;
 use App\Repositories\Repository;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Jenssegers\Agent\Agent;
 use Joalvm\Utils\Builder;
 use Joalvm\Utils\Exceptions\UnauthorizedException;
 use Joalvm\Utils\Item;
@@ -29,9 +30,9 @@ class SessionsRepository extends Repository implements SessionsInterface
     ) {
     }
 
-    public function save(array $data): Session
+    public function save(CreateSessionData $data): Session
     {
-        $model = $this->model->newInstance($data);
+        $model = $this->model->newInstance($data->all());
 
         $model->validate()->save();
 
@@ -50,17 +51,17 @@ class SessionsRepository extends Repository implements SessionsInterface
         ;
     }
 
-    public function login(array $data, bool $validatePassword = true): Item
+    public function login(LoginSessionData $data, bool $validatePassword = true): Item
     {
-        $userModel = $this->getUserInfo($data, $validatePassword);
+        $userModel = $this->getUserInfo($data->email, $data->password, $validatePassword);
 
         DB::beginTransaction();
 
         $sessionModel = $this->save(
-            $this->getSessionData($data, $userModel->id)
+            $this->getSessionData($userModel->id, $data)
         );
 
-        $this->handleJwtToken($sessionModel, $userModel, request()->getHost());
+        $this->handleJwtToken($sessionModel, $userModel, $data->host);
 
         DB::commit();
 
@@ -96,25 +97,24 @@ class SessionsRepository extends Repository implements SessionsInterface
         return $auth;
     }
 
-    private function getSessionData(array $data, int $userId): array
-    {
-        // @todo Quitar el uso de la funcion request(), el repositorio
-        // debe ser independiente de la petición.
-        $agent = new Agent(request()->headers->all(), request()->userAgent());
+    private function getSessionData(
+        int $userId,
+        LoginSessionData $data,
+    ): CreateSessionData {
         $now = Carbon::now();
 
-        $now->addDays(Arr::get($data, 'remember_me', false) ? 30 : 1);
+        $now->addDays($data->rememberMe ? 30 : 1);
 
-        return [
+        return CreateSessionData::from([
             'user_id' => $userId,
             'token' => Str::random(),
             'expire_at' => $now->format(\DateTime::ATOM),
-            'ip' => request()->ip(),
-            'browser' => $this->browser($agent),
-            'browser_version' => $this->browserVersion($agent),
-            'platform' => $this->platform($agent),
-            'platform_version' => $this->platformVersion($agent),
-        ];
+            'ip' => $data->ip,
+            'browser' => $data->browser,
+            'browser_version' => $data->browserVersion,
+            'platform' => $data->platform,
+            'platform_version' => $data->platformVersion,
+        ]);
     }
 
     private function handleJwtToken(
@@ -130,9 +130,12 @@ class SessionsRepository extends Repository implements SessionsInterface
             'rol' => $userModel->role,
         ];
 
+        /** @var Carbon */
+        $expire = SupportCarbon::createFromImmutable($sessionModel->expire_at);
+
         $encoded = JWT::encode(
             $payload,
-            $sessionModel->expire_at->diffInMinutes(Carbon::now())
+            $expire->diffInMinutes(Carbon::parse(LARAVEL_START))
         );
 
         $sessionModel->setAttribute('token', $encoded[0]);
@@ -140,31 +143,12 @@ class SessionsRepository extends Repository implements SessionsInterface
         $sessionModel->update();
     }
 
-    private function browser(Agent $agent): string
-    {
-        return $agent->browser() ?: 'unknown';
-    }
-
-    private function browserVersion(Agent $agent): string
-    {
-        return $agent->version($this->browser($agent)) ?: 'unknown';
-    }
-
-    private function platform(Agent $agent): string
-    {
-        return $agent->platform() ?: 'unknown';
-    }
-
-    private function platformVersion(Agent $agent): string
-    {
-        return $agent->version($this->platform($agent)) ?: 'unknown';
-    }
-
-    private function getUserInfo(array $data, bool $validatePassword = true): User
-    {
-        // Verificando la existencia del usuario
-        $password = Arr::get($data, 'password');
-        $userModel = $this->validateUserEmail(Arr::get($data, 'email'));
+    private function getUserInfo(
+        string $email,
+        string $password,
+        bool $validatePassword = true
+    ): User {
+        $userModel = $this->validateUserEmail($email);
 
         if (!$validatePassword) {
             return $userModel;

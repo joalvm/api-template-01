@@ -2,15 +2,17 @@
 
 namespace App\Repositories\Users;
 
+use App\DataObjects\Repositories\Users\CreateUserData;
+use App\DataObjects\Repositories\Users\UpdateUserData;
+use App\DataObjects\Repositories\Users\UpdateUserEmailData;
+use App\DataObjects\Repositories\Users\UpdateUserPasswordData;
 use App\Enums\UserRole;
 use App\Exceptions\Users\AlreadyVerifiedUserException;
 use App\Exceptions\Users\WrongCurrentPasswordException;
-use App\Interfaces\PersonsInterface;
 use App\Interfaces\Users\UsersInterface;
 use App\Models\User\User;
 use App\Repositories\Repository;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -31,10 +33,8 @@ class UsersRepository extends Repository implements UsersInterface
      */
     private array $roles = [];
 
-    public function __construct(
-        public User $model,
-        protected PersonsInterface $personsRepository
-    ) {
+    public function __construct(public User $model)
+    {
     }
 
     public function all(): Collection
@@ -52,68 +52,72 @@ class UsersRepository extends Repository implements UsersInterface
         return $this->builder()->where('u.email', $email)->first();
     }
 
-    public function save(array $data): User
+    public function save(CreateUserData $data): User
     {
-        $only = ['role', 'person_id', 'email', 'password', 'avatar_url'];
+        $model = $this->model->newInstance($data->except('password')->all());
 
-        $model = $this->model->newInstance(Arr::only($data, $only));
-
-        if ($this->user->isSuperAdmin()) {
-            $model->setAttribute('super_admin', Arr::get($data, 'super_admin', false));
+        if (is_optional($data->password) or is_null($data->password)) {
+            $data->password = Str::password(8);
+            $model->setRealPassword($data->password);
         }
 
-        DB::beginTransaction();
-
-        list($password, $salt) = $this->encryptPassword($model->getAttribute('password'));
-
-        $model->setAttribute('password', $password);
-        $model->setAttribute('salt', $salt);
-
+        $this->handlePassword($data->password, $model);
         $this->handleVerificationToken($model);
 
-        if (Arr::has($data, 'person')) {
-            $personData = Arr::get($data, 'person');
-
-            if (!Arr::has($personData, 'email')) {
-                $personData['email'] = $model->getAttribute('email');
-            }
-
-            $model->setAttribute(
-                'person_id',
-                $this->personsRepository->save($personData)->id
-            );
-        }
-
         $model->validate()->save();
-
-        DB::commit();
 
         return $model;
     }
 
-    public function update($id, array $data): User
+    public function update($id, UpdateUserData $data): User
     {
         $model = $this->getModel($id);
 
-        // 1. Verificar si la contraseña a cambiado.
-        if (Arr::has($data, 'password')) {
-            $this->changePasswordIfCurrentIsValid(
-                $model,
-                Arr::get($data, 'current_password'),
-                Arr::get($data, 'password')
-            );
-        }
-
-        // 2. Verificar si el correo es diferente.
-        if (Arr::has($data, 'email')) {
-            $model->setAttribute('verified_at', null);
-
-            $this->generateVerificationToken($model);
-        }
-
-        $model->fill(Arr::only($data, ['email', 'enabled', 'avatar_url']));
+        $model->fill($data->all());
 
         $model->validate()->update();
+
+        return $model;
+    }
+
+    public function updateEmail($id, UpdateUserEmailData $data): User
+    {
+        $model = $this->getModel($id);
+
+        if ($model->email === $data->email) {
+            return $model;
+        }
+
+        $model->setAttribute('email', $data->email);
+
+        $this->generateVerificationToken($model);
+
+        $model->update();
+
+        $model->isEmailChanged = true;
+
+        return $model;
+    }
+
+    public function updatePassword($id, UpdateUserPasswordData $data): User
+    {
+        $model = $this->getModel($id);
+
+        if (!$this->isValidPassword($model, $data->currentPassword)) {
+            throw new WrongCurrentPasswordException();
+        }
+
+        if ($data->password !== $data->confirmPassword) {
+            throw new WrongCurrentPasswordException();
+        }
+
+        list($hash, $salt) = $this->encryptPassword($data->password);
+
+        $model->setAttribute('password_reset_at', Carbon::now());
+        $model->setAttribute('password', $hash);
+        $model->setAttribute('salt', $salt);
+
+        $model->update();
 
         return $model;
     }
@@ -126,7 +130,8 @@ class UsersRepository extends Repository implements UsersInterface
             $model
                 ->sessions()
                 ->where('closed_at', null)
-                ->update(['closed_at' => Carbon::now()]);
+                ->update(['closed_at' => Carbon::now()])
+            ;
         }
 
         return $result;
@@ -142,7 +147,8 @@ class UsersRepository extends Repository implements UsersInterface
         return $this->model
             ->newQuery()
             ->where('person_id', $personId)
-            ->firstOrFail();
+            ->firstOrFail()
+        ;
     }
 
     public function getModelByEmail(string $email): User
@@ -150,9 +156,13 @@ class UsersRepository extends Repository implements UsersInterface
         return $this->model
             ->newQuery()
             ->where('email', $email)
-            ->firstOrFail();
+            ->firstOrFail()
+        ;
     }
 
+    /**
+     * Obtiene los datos de autenticación del usuario usando su ID.
+     */
     public function getAuthData(int $userId): array
     {
         $query = DB::table('public.users', 'u')
@@ -186,6 +196,9 @@ class UsersRepository extends Repository implements UsersInterface
         return $this;
     }
 
+    /**
+     * Verifica si la contraseña es válida.
+     */
     public function isValidPassword(User $model, string $password): bool
     {
         return Hash::check(
@@ -195,35 +208,33 @@ class UsersRepository extends Repository implements UsersInterface
         );
     }
 
-    private function changePasswordIfCurrentIsValid(
-        User &$model,
-        string $currentPassword,
-        ?string $newPassword = null
-    ): void {
-        if (!$this->isValidPassword($model, $currentPassword)) {
-            throw new WrongCurrentPasswordException();
-        }
+    /**
+     * Cifra la contraseña y el salt, y los asigna al modelo.
+     */
+    private function handlePassword(string $password, User &$model): void
+    {
+        list($password, $salt) = $this->encryptPassword($password);
 
-        list($encryptedPassword, $salt) = $this->encryptPassword($newPassword);
-
-        $model->setAttribute('password_reset_at', Carbon::now());
-        $model->setAttribute('password', $encryptedPassword);
+        $model->setAttribute('password', $password);
         $model->setAttribute('salt', $salt);
     }
 
     /**
-     * Cifrando la contraseña y generando el salt.
+     * Cifra la contraseña, genera un salt y lo retorna.
      *
-     * @return array<string>
+     * @return array<string,string>
      */
     private function encryptPassword(?string $password = null): array
     {
-        $password = $password ?: User::DEFAULT_PASSWORD;
         $salt = Str::random();
+        $hash = Hash::make("{$salt}.{$password}", ['rounds' => 14]);
 
-        return [Hash::make("{$salt}.{$password}", ['rounds' => 14]), $salt];
+        return [$hash, $salt];
     }
 
+    /**
+     * Genera un token de verificación, lo asigna al modelo y lo actualiza.
+     */
     private function handleVerificationToken(User &$model): void
     {
         if (!is_null($model->verified_at)) {
@@ -235,15 +246,16 @@ class UsersRepository extends Repository implements UsersInterface
         $model->update();
     }
 
+    /**
+     * Genera un token de verificación y lo asigna al modelo.
+     */
     private function generateVerificationToken(User &$model): void
     {
-        $payload = [
-            'iss' => request()->getHost(),
-            'sub' => $model->id,
-        ];
+        $payload = ['sub' => $model->id];
 
-        list($token) = JWT::encode($payload, 48 * 60);
+        list($token) = JWT::encode($payload, 60);
 
+        $model->setAttribute('verified_at', null);
         $model->setAttribute('verification_token', $token);
     }
 

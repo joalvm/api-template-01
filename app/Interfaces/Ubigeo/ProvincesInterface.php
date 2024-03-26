@@ -2,6 +2,8 @@
 
 namespace App\Interfaces\Ubigeo;
 
+use App\DataObjects\Repositories\Ubigeo\CreateProvinceData;
+use App\DataObjects\Repositories\Ubigeo\UpdateProvinceData;
 use App\Interfaces\BaseInterface;
 use App\Models\Ubigeo\Province;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -29,7 +31,7 @@ interface ProvincesInterface extends BaseInterface
      *
      * @throws ValidationException
      */
-    public function save(array $data): Province;
+    public function save(CreateProvinceData $data): Province;
 
     /**
      * Actualiza un recurso province.
@@ -39,7 +41,7 @@ interface ProvincesInterface extends BaseInterface
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function update($id, array $data): Province;
+    public function update($id, UpdateProvinceData $data): Province;
 
     /**
      * Elimina un recurso province.

@@ -10,17 +10,17 @@ use Joalvm\Utils\Casts\TimestamptzCast;
 use Joalvm\Utils\Rules\TimestamptzRule;
 
 /**
- * @property      int                 $id
- * @property      int                 $user_id
- * @property      string              $token
- * @property      \Carbon\Carbon      $expire_at
- * @property      string              $ip
- * @property      string              $browser
- * @property      string              $browser_version
- * @property      string              $platform
- * @property      string              $platform_version
- * @property      \Carbon\Carbon|null $closed_at
- * @property-read User                $user
+ * @property      int                     $id
+ * @property      int                     $user_id
+ * @property      string                  $token
+ * @property      \DateTimeImmutable      $expire_at
+ * @property      string                  $ip
+ * @property      string                  $browser
+ * @property      string                  $browser_version
+ * @property      string                  $platform
+ * @property      string                  $platform_version
+ * @property      \DateTimeImmutable|null $closed_at
+ * @property-read User                    $user
  */
 class Session extends Model
 {

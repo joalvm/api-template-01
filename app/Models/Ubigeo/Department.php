@@ -38,8 +38,8 @@ class Department extends Model
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', $this->unique('name')],
-            'code' => ['required', 'string', 'size:2', $this->unique('code')],
+            'name' => ['required', 'string', $this->ruleUnique('name')],
+            'code' => ['required', 'string', 'size:2', $this->ruleUnique('code')],
             'latitude' => ['nullable', 'numeric', 'required_with:longitude'],
             'longitude' => ['nullable', 'numeric', 'required_with:latitude'],
         ];
@@ -50,7 +50,7 @@ class Department extends Model
         return $this->hasMany(Province::class, 'department_id', 'id');
     }
 
-    public function unique(string $column): \Closure
+    public function ruleUnique(string $column): \Closure
     {
         return function (string $attribute, mixed $value, \Closure $fail) use ($column) {
             $query = $this->newQuery()->where($column, $value);

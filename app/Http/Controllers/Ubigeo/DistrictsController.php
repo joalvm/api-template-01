@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Ubigeo;
 
-use App\Facades\Session;
+use App\DataObjects\Repositories\Ubigeo\CreateDistrictData;
+use App\DataObjects\Repositories\Ubigeo\UpdateDistrictData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Ubigeo\StoreDistrictRequest;
 use App\Http\Requests\Ubigeo\UpdateDistrictRequest;
 use App\Interfaces\Ubigeo\DistrictsInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Facades\Response;
 
 class DistrictsController extends Controller
@@ -34,13 +34,11 @@ class DistrictsController extends Controller
 
     public function store(StoreDistrictRequest $request): JsonResponse
     {
-        if (!Session::isSuperAdmin() and !Session::isCoordinator()) {
-            throw new ForbiddenException();
-        }
+        $data = CreateDistrictData::from($request->post());
 
         return Response::stored(
             $this->repository->find(
-                $this->repository->save($request->all())->id
+                $this->repository->save($data)->id
             )
         );
     }
@@ -52,23 +50,17 @@ class DistrictsController extends Controller
 
     public function update($id, UpdateDistrictRequest $request): JsonResponse
     {
-        if (!Session::isSuperAdmin() and !Session::isCoordinator()) {
-            throw new ForbiddenException();
-        }
+        $data = UpdateDistrictData::from($request->post());
 
         return Response::updated(
             $this->repository->find(
-                $this->repository->update($id, $request->all())->id
+                $this->repository->update($id, $data)->id
             )
         );
     }
 
     public function destroy($id): JsonResponse
     {
-        if (!Session::isSuperAdmin() and !Session::isCoordinator()) {
-            throw new ForbiddenException();
-        }
-
         return Response::destroyed($this->repository->delete($id));
     }
 }

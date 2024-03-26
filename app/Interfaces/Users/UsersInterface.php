@@ -2,6 +2,10 @@
 
 namespace App\Interfaces\Users;
 
+use App\DataObjects\Repositories\Users\CreateUserData;
+use App\DataObjects\Repositories\Users\UpdateUserData;
+use App\DataObjects\Repositories\Users\UpdateUserEmailData;
+use App\DataObjects\Repositories\Users\UpdateUserPasswordData;
 use App\Enums\UserRole;
 use App\Exceptions\Users\AlreadyVerifiedUserException;
 use App\Exceptions\Users\WrongCurrentPasswordException;
@@ -37,7 +41,7 @@ interface UsersInterface extends BaseInterface
      * @throws ValidationException
      * @throws AlreadyVerifiedUserException
      */
-    public function save(array $data): User;
+    public function save(CreateUserData $data): User;
 
     /**
      * Actualiza un recurso user.
@@ -48,7 +52,27 @@ interface UsersInterface extends BaseInterface
      * @throws ModelNotFoundException
      * @throws WrongCurrentPasswordException
      */
-    public function update($id, array $data): User;
+    public function update($id, UpdateUserData $data): User;
+
+    /**
+     * Actualiza la el correo electrónico de un usuario y su verificación del mismo.
+     *
+     * @param int $id
+     *
+     * @throws ModelNotFoundException
+     * @throws AlreadyVerifiedUserException
+     */
+    public function updateEmail($id, UpdateUserEmailData $data): User;
+
+    /**
+     * Actualiza la contraseña de un usuario.
+     *
+     * @param int $id
+     *
+     * @throws WrongCurrentPasswordException
+     * @throws ModelNotFoundException
+     */
+    public function updatePassword($id, UpdateUserPasswordData $data): User;
 
     /**
      * Elimina un recurso user.

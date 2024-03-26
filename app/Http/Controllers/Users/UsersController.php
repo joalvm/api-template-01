@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\DataObjects\Repositories\Users\CreateUserData;
+use App\DataObjects\Repositories\Users\UpdateUserData;
+use App\DataObjects\Repositories\Users\UpdateUserEmailData;
+use App\DataObjects\Repositories\Users\UpdateUserPasswordData;
 use App\Facades\Session;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Interfaces\Users\UsersInterface;
+use App\Jobs\SendEmailVerificationOnEmailChangeJob;
+use App\Jobs\SendNewUserWelcomeEmailJob;
+use App\Jobs\SendPasswordChangeNotificationJob;
+use App\Models\User\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Facades\Response;
 
@@ -30,15 +39,18 @@ class UsersController extends Controller
 
     public function store(StoreUserRequest $request): JsonResponse
     {
-        if (Session::isUserBasic()) {
-            throw new ForbiddenException();
-        }
+        $data = CreateUserData::from($request->post());
 
-        return Response::stored(
-            $this->repository->find(
-                $this->repository->save($request->all())->id
+        $userModel = $this->repository->save($data);
+
+        dispatch(
+            new SendNewUserWelcomeEmailJob(
+                $userModel,
+                $request->input('redirect_url')
             )
         );
+
+        return Response::stored($this->repository->find($userModel->id));
     }
 
     public function show($id): JsonResponse
@@ -48,11 +60,14 @@ class UsersController extends Controller
 
     public function update($id, UpdateUserRequest $request): JsonResponse
     {
-        return Response::updated(
-            $this->repository->find(
-                $this->repository->update($id, $request->all())->id
-            )
-        );
+        $data = UpdateUserData::from($request->only(['avatar_url', 'enabled']));
+
+        $userModel = $this->repository->update($id, $data);
+
+        $this->handleUpdateEmail($request, $userModel);
+        $this->handleUpdatePassword($request, $userModel);
+
+        return Response::updated($this->repository->find($userModel->id));
     }
 
     public function destroy($id): JsonResponse
@@ -62,5 +77,51 @@ class UsersController extends Controller
         }
 
         return Response::destroyed($this->repository->delete($id));
+    }
+
+    private function handleUpdateEmail(UpdateUserRequest $request, User $userModel)
+    {
+        if (!$request->has('email')) {
+            return;
+        }
+
+        $data = UpdateUserEmailData::from($request->post('email'));
+
+        $data->host = $request->getHost();
+
+        $userModel = $this->repository->updateEmail($userModel->id, $data);
+
+        if ($userModel->isEmailChanged) {
+            dispatch(
+                new SendEmailVerificationOnEmailChangeJob(
+                    $userModel,
+                    $request->input('redirect_url')
+                )
+            );
+        }
+    }
+
+    private function handleUpdatePassword(UpdateUserRequest $request, User $userModel)
+    {
+        if (!$request->has('password')) {
+            return;
+        }
+
+        $input = $request->only([
+            'current_password',
+            'password',
+            'confirm_password',
+        ]);
+
+        $data = UpdateUserPasswordData::from($input);
+
+        $userModel = $this->repository->updatePassword($userModel->id, $data);
+
+        dispatch(
+            new SendPasswordChangeNotificationJob(
+                $userModel,
+                $request->input('redirect_url')
+            )
+        );
     }
 }

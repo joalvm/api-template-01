@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Lang;
 
 /**
  * @property      int                             $id
@@ -57,7 +58,7 @@ class Province extends Model
                 'required',
                 'string',
                 'size:4',
-                $this->ruleUniqueCode('code'),
+                $this->ruleUniqueCode(),
             ],
             'latitude' => ['nullable', 'numeric', 'required_with:longitude'],
             'longitude' => ['nullable', 'numeric', 'required_with:latitude'],
@@ -80,7 +81,7 @@ class Province extends Model
             $query = $this->department()->getQuery();
 
             if (!$query->exists()) {
-                $fail('validation.exists')->translate();
+                $fail(Lang::get('validation.exists', ['attribute' => $attribute]));
             }
         };
     }
@@ -98,22 +99,22 @@ class Province extends Model
             }
 
             if ($query->exists()) {
-                $fail('validation.unique')->translate();
+                $fail(Lang::get('validation.unique', ['attribute' => $attribute]));
             }
         };
     }
 
-    private function ruleUniqueCode(string $column): \Closure
+    private function ruleUniqueCode(): \Closure
     {
-        return function (string $attribute, mixed $value, \Closure $fail) use ($column) {
-            $query = $this->newQuery()->where($column, $value);
+        return function (string $attribute, mixed $value, \Closure $fail) {
+            $query = $this->newQuery()->where('code', $value);
 
             if ($this->exists) {
                 $query->where('id', '<>', $this->getAttribute('id'));
             }
 
             if ($query->exists()) {
-                $fail('validation.unique')->translate();
+                $fail(Lang::get('validation.unique', ['attribute' => $attribute]));
             }
         };
     }

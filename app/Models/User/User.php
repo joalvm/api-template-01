@@ -40,10 +40,14 @@ class User extends Model
     use HasFactory;
     use SoftDeletes;
 
-    // @TODO: Quitar esta constante y hacer que se genere aleatoriamente la contraseña
-    public const DEFAULT_PASSWORD = 'app@2023';
-
     public $timestamps = true;
+
+    /**
+     * Mantiene la contraseña real del usuario al momento de la creación o actualización.
+     */
+    public ?string $realPassword = null;
+
+    public bool $isEmailChanged = false;
 
     protected $table = 'public.users';
 
@@ -114,6 +118,18 @@ class User extends Model
     public function sessions(): HasMany
     {
         return $this->hasMany(Session::class, 'user_id', 'id');
+    }
+
+    public function setRealPassword(string $password): self
+    {
+        $this->realPassword = $password;
+
+        return $this;
+    }
+
+    public function getRealPassword(): ?string
+    {
+        return $this->realPassword;
     }
 
     private function ruleExistsPerson(): \Closure

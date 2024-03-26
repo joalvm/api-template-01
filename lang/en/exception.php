@@ -9,6 +9,7 @@ return [
         'already_verified' => 'The user is already verified.',
         'create_not_allowed' => 'You do not have permissions to create this type of user',
         'cannot_delete_super_admin' => 'You cannot delete this type of user.',
+        'cannot_delete_self_user' => 'You cannot delete your own account.',
     ],
     'session' => [
         'wrong' => 'Wrong email or password.',
