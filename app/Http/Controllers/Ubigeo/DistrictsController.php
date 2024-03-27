@@ -27,7 +27,6 @@ class DistrictsController extends Controller
                 ->setProvinceCodes($request->get('province_codes'))
                 ->setDepartments($request->get('departments'))
                 ->setDepartmentCodes($request->get('department_codes'))
-                ->setUbigeoCodes($request->get('ubigeo_codes'))
                 ->all()
         );
     }

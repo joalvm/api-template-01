@@ -29,11 +29,6 @@ class DistrictsRepository extends Repository implements DistrictsInterface
     protected array $departmentCodes = [];
 
     /**
-     * @var string[]
-     */
-    protected array $ubigeoCodes = [];
-
-    /**
      * @var int[]
      */
     protected array $provinces = [];
@@ -49,7 +44,7 @@ class DistrictsRepository extends Repository implements DistrictsInterface
 
     public function all(): Collection
     {
-        return $this->builder()->forcePaginate()->all();
+        return $this->builder()->all();
     }
 
     public function find($id): ?Item
@@ -90,13 +85,6 @@ class DistrictsRepository extends Repository implements DistrictsInterface
     public function setCodes($codes): static
     {
         $this->codes = to_list($codes);
-
-        return $this;
-    }
-
-    public function setUbigeoCodes($ubigeoCodes): static
-    {
-        $this->ubigeoCodes = to_list($ubigeoCodes);
 
         return $this;
     }
@@ -154,10 +142,6 @@ class DistrictsRepository extends Repository implements DistrictsInterface
 
         if ($this->departmentCodes) {
             $builder->whereIn('d.code', $this->departmentCodes);
-        }
-
-        if ($this->ubigeoCodes) {
-            $builder->whereIn('ds.code', $this->ubigeoCodes);
         }
 
         if ($this->provinces) {

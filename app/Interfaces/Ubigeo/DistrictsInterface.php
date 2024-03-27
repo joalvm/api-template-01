@@ -68,13 +68,6 @@ interface DistrictsInterface extends BaseInterface
     public function setCodes($codes): static;
 
     /**
-     * Establece el filtro por la union de todos los codigos ubigeo.
-     *
-     * @param string[]|null $ubigeoCodes
-     */
-    public function setUbigeoCodes($ubigeoCodes): static;
-
-    /**
      * Establece el filtro por id de provincias.
      *
      * @param int[]|null $provinces
