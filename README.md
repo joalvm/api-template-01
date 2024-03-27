@@ -15,7 +15,7 @@
 
 ### `schema`
 
-- **Tipo:** ``Object``
+- **Tipo:** ``Array<string>``
 - **Descripción:** Permita filtrar las keys del esquema, para obtener solo las keys que se necesitan usan la ``notación dot`` para acceder a keys dentro de otros objetos.
 - **Default:** `None`
 
