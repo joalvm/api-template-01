@@ -3,6 +3,7 @@
 namespace App\Models\User;
 
 use App\Models\Model;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Lang;
@@ -54,6 +55,7 @@ class Session extends Model
             'user_id' => [
                 'required',
                 'integer',
+                new IntegerPositiveRule(),
                 $this->ruleExistsUser(),
             ],
             'token' => [

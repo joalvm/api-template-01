@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class GenerateDatabaseCommand extends Command
 {
@@ -39,7 +40,7 @@ class GenerateDatabaseCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Une todos los scripts defenidos en la carpeta database/scripts';
+    protected $description = 'Crea una nueva base de datos con la estructura definida en los scripts SQL.';
 
     public function __construct()
     {
@@ -50,8 +51,22 @@ class GenerateDatabaseCommand extends Command
         $this->addArgument(
             'database',
             InputArgument::OPTIONAL,
-            'Nombre de la base de datos que se va a crear',
+            'Nombre de la base de datos que se va a crear, por defecto es el nombre definido en el archivo .env',
             $this->databaseName
+        );
+
+        $this->addOption(
+            'without-seed',
+            null,
+            InputOption::VALUE_NONE,
+            'No ejecutar los seeders'
+        );
+
+        $this->addOption(
+            'yes',
+            'y',
+            InputOption::VALUE_NEGATABLE,
+            'Responder afirmativamente a todas las preguntas'
         );
     }
 
@@ -68,18 +83,18 @@ class GenerateDatabaseCommand extends Command
             return;
         }
 
-        try {
-            $this->changeToPostgresDatabase();
-            $this->renameOldDatabaseIfExists($this->databaseName);
-            $this->createNewDatabase($this->databaseName);
-            $this->loadStructure();
+        $this->changeToPostgresDatabase();
+        $this->renameOldDatabaseIfExists($this->databaseName);
+        $this->createNewDatabase($this->databaseName);
+        $this->loadStructure();
 
-            $this->line(PHP_EOL);
+        $this->line(PHP_EOL);
 
-            Artisan::call('db:seed', [], $this->output);
-        } catch (\Throwable $ex) {
-            dd($ex);
+        if ($this->option('without-seed')) {
+            return Command::SUCCESS;
         }
+
+        Artisan::call('db:seed', [], $this->output);
 
         $this->info('Success!');
 
@@ -88,6 +103,10 @@ class GenerateDatabaseCommand extends Command
 
     private function canContinue(): bool
     {
+        if ($this->option('yes')) {
+            return true;
+        }
+
         $config = Arr::only(
             Config::get('database.connections.' . DB::getDefaultConnection()),
             ['host', 'port', 'username']
@@ -122,7 +141,7 @@ class GenerateDatabaseCommand extends Command
             $file = File::get($script);
 
             if ($file) {
-                DB::unprepared($file);
+                $this->tempConn()->unprepared($file);
                 $progress->advance();
                 usleep(5000);
             }
@@ -142,6 +161,11 @@ class GenerateDatabaseCommand extends Command
             TABLESPACE=default
             CONNECTION LIMIT=-1"
         );
+
+        // Cambiar la conexión a la nueva base de datos
+        Config::set('database.connections.pgsql_temp.database', $databaseName);
+
+        $this->tempConn()->reconnect();
     }
 
     private function searchScripts(): array

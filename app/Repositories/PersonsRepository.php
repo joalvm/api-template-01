@@ -114,11 +114,15 @@ class PersonsRepository extends Repository implements PersonsInterface
     private function filters(Builder $builder): Builder
     {
         if ($this->documentTypes) {
-            $builder->whereIn('dt.id', $this->documentTypes);
+            $builder->whereIn('p.document_type_id', $this->documentTypes);
         }
 
         if ($this->gender) {
             $builder->where('p.gender', $this->gender->value);
+        }
+
+        if ($this->idDocuments) {
+            $builder->whereIn('p.id_document', $this->idDocuments);
         }
 
         return $builder;

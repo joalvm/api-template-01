@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\Gender;
 use App\Facades\Session;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Joalvm\Utils\Rules\AlphaSpaceRule;
@@ -28,10 +29,10 @@ class StorePersonRequest extends FormRequest
         return [
             'names' => ['required', 'string', new AlphaSpaceRule()],
             'last_names' => ['required', 'string', new AlphaSpaceRule()],
-            'gender' => ['required', Rule::in(Gender::values())],
-            'document_type_id' => ['required', 'integer'],
+            'gender' => ['required', 'string', Rule::in(Gender::values())],
+            'document_type_id' => ['required', 'integer', new IntegerPositiveRule()],
             'id_document' => ['required', 'string'],
-            'email' => ['filled', 'string'],
+            'email' => ['filled', 'string', 'email'],
         ];
     }
 }

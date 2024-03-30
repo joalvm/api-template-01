@@ -13,10 +13,7 @@ class SessionServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (!$this->app->runningInConsole()) {
-            $this->app->singleton('app.session', SessionManager::class);
-        }
-
+        $this->app->singleton('app.session', SessionManager::class);
         $this->app->singleton('app.user', UserManager::class);
     }
 

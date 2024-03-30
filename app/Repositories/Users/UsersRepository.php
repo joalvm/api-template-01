@@ -58,7 +58,6 @@ class UsersRepository extends Repository implements UsersInterface
 
         if (is_optional($data->password) or is_null($data->password)) {
             $data->password = Str::password(8);
-            $model->setRealPassword($data->password);
         }
 
         $this->handlePassword($data->password, $model);
@@ -213,10 +212,12 @@ class UsersRepository extends Repository implements UsersInterface
      */
     private function handlePassword(string $password, User &$model): void
     {
-        list($password, $salt) = $this->encryptPassword($password);
+        list($hash, $salt) = $this->encryptPassword($password);
 
-        $model->setAttribute('password', $password);
+        $model->setAttribute('password', $hash);
         $model->setAttribute('salt', $salt);
+
+        $model->setRealPassword($password);
     }
 
     /**

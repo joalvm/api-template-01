@@ -3,6 +3,7 @@
 namespace App\Models\Ubigeo;
 
 use App\Models\Model;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -44,6 +45,7 @@ class District extends Model
             'province_id' => [
                 'required',
                 'integer',
+                new IntegerPositiveRule(),
                 $this->ruleExistsProvince(),
             ],
             'name' => ['required', 'string', $this->ruleUniqueNamePerProvince()],

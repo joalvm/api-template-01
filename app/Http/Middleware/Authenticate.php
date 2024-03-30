@@ -10,6 +10,7 @@ use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\SignatureInvalidException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Joalvm\Utils\JWT;
 
 class Authenticate
@@ -21,6 +22,12 @@ class Authenticate
      */
     public function handle($request, \Closure $next)
     {
+        if (App::environment('testing')) {
+            Session::isTesting();
+
+            return $next($request);
+        }
+
         $token = $this->decodeBearerToken($request->bearerToken());
 
         Session::authenticate($token->jti);

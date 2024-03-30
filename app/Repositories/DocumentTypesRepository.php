@@ -31,7 +31,7 @@ class DocumentTypesRepository extends Repository implements DocumentTypesInterfa
         return $this->builder()->all();
     }
 
-    public function find($id): Item
+    public function find($id): ?Item
     {
         return $this->builder()->find($id);
     }

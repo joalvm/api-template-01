@@ -11,6 +11,7 @@ use App\Http\Requests\StorePersonRequest;
 use App\Http\Requests\UpdatePersonRequest;
 use App\Interfaces\PersonsInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Facades\Response;
 
@@ -20,9 +21,15 @@ class PersonsController extends Controller
     {
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return Response::collection($this->repository->all());
+        return Response::collection(
+            $this->repository
+                ->setDocumentTypes($request->get('document_types'))
+                ->setGender($request->get('gender'))
+                ->setIdDocuments($request->get('id_documents'))
+                ->all()
+        );
     }
 
     public function store(StorePersonRequest $request): JsonResponse

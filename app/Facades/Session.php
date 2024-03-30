@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool                isSuperAdmin()               Si la session es de un super administrador.
  * @method static bool                isAdmin()                    Si la sesión es de un administrador.
  * @method static bool                isUserBasic()                Si la sesión es de un usuario común.
+ * @method static void                isTesting()                  Inicia la sesión de prueba.
  * @method static \App\Enums\UserRole userRole()                   el tipo de usuario de la sesión.
  */
 class Session extends Facade

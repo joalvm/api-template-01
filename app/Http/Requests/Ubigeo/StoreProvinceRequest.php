@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Ubigeo;
 
 use App\Facades\Session;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProvinceRequest extends FormRequest
@@ -26,8 +27,7 @@ class StoreProvinceRequest extends FormRequest
             'department_id' => [
                 'required',
                 'integer',
-                'min:1',
-                'max:' . PHP_INT_MAX,
+                new IntegerPositiveRule(),
             ],
             'name' => ['required', 'string'],
             'code' => ['required', 'string', 'size:4'],

@@ -47,7 +47,7 @@ class DocumentTypesController extends Controller
     {
         $data = UpdateDocumentTypeData::from($request->post());
 
-        return Response::stored(
+        return Response::updated(
             $this->repository->find(
                 $this->repository->update($id, $data)->id
             )

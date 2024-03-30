@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Gender;
 use App\Models\User\User;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -54,6 +55,7 @@ class Person extends Model
             'document_type_id' => [
                 'required',
                 'integer',
+                new IntegerPositiveRule(),
                 $this->ruleExistsDocumentType(),
             ],
             'id_document' => [

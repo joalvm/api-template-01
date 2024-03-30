@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\CharType;
 use App\Enums\LengthType;
 use App\Facades\Session;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,9 +29,9 @@ class UpdateDocumentTypeRequest extends FormRequest
         return [
             'name' => ['filled', 'string'],
             'abbr' => ['filled', 'string'],
-            'length_type' => ['filled', Rule::in(LengthType::values())],
-            'length' => ['filled', 'integer', 'min:1', 'max:' . PHP_INT_MAX],
-            'char_type' => ['filled', Rule::in(CharType::values())],
+            'length_type' => ['filled', 'string', Rule::in(LengthType::values())],
+            'length' => ['filled', 'integer', new IntegerPositiveRule()],
+            'char_type' => ['filled', 'string', Rule::in(CharType::values())],
         ];
     }
 }

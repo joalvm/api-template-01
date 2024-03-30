@@ -4,6 +4,7 @@ namespace App\Http\Requests\Users;
 
 use App\Enums\UserRole;
 use App\Facades\Session;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -25,7 +26,7 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'person_id' => ['required_without:person', 'integer'],
+            'person_id' => ['required_without:person', 'integer', new IntegerPositiveRule()],
             'role' => ['filled', 'string', Rule::in(UserRole::values())],
             'email' => ['required', 'email:rfc,dns'],
             'password' => ['filled', 'string', 'min:8'],

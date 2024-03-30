@@ -17,6 +17,19 @@ class SessionManager
 
     private bool $isAuthenticated = false;
 
+    public function isTesting(): void
+    {
+        $this->isAuthenticated = true;
+
+        $this->userRole = UserRole::ADMIN;
+
+        User::load([
+            'id' => 1,
+            'role' => UserRole::ADMIN->value,
+            'super_admin' => true,
+        ]);
+    }
+
     public function authenticate(int $sessionId): void
     {
         /** @var SessionsInterface $repository */

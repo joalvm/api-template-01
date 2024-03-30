@@ -2,11 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\DataObjects\Repositories\CreatePersonData;
+use App\DataObjects\Repositories\Users\CreateUserData;
 use App\Enums\Gender;
 use App\Enums\UserRole;
 use App\Facades\User;
 use App\Interfaces\PersonsInterface;
 use App\Interfaces\Users\UsersInterface;
+use App\Models\Person;
 use Illuminate\Database\Seeder;
 
 class SuperAdminSeeder extends Seeder
@@ -26,12 +29,17 @@ class SuperAdminSeeder extends Seeder
      */
     public function run()
     {
-        $faker = fake('es_PE');
-
         $this->usersRepository->loadUser(User::getFacadeRoot());
         $this->personsRepository->loadUser(User::getFacadeRoot());
 
-        $personModel = $this->personsRepository->save([
+        $this->makeUser($this->makePerson());
+    }
+
+    private function makePerson(): Person
+    {
+        $faker = fake('es_PE');
+
+        $data = CreatePersonData::from([
             'names' => $faker->firstName,
             'last_names' => $faker->lastName,
             'gender' => Gender::MALE,
@@ -40,14 +48,23 @@ class SuperAdminSeeder extends Seeder
             'email' => self::DEFAULT_EMAIL,
         ]);
 
-        $this->usersRepository->save([
-            'person_id' => $personModel->id,
+        return $this->personsRepository->save($data);
+    }
+
+    private function makeUser(Person $person): void
+    {
+        $faker = fake('es_PE');
+
+        $data = CreateUserData::from([
+            'person_id' => $person->id,
             'email' => self::DEFAULT_EMAIL,
             'role' => UserRole::ADMIN,
-            'avatar_url' => fake()->imageUrl(75, 75),
+            'avatar_url' => $faker->imageUrl(75, 75),
             'password' => self::DEFAULT_PASSWORD,
             'confirm_password' => self::DEFAULT_PASSWORD,
             'super_admin' => true,
         ]);
+
+        $this->usersRepository->save($data);
     }
 }

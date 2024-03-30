@@ -25,7 +25,7 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'role' => ['filled', Rule::in(UserRole::values())],
+            'role' => ['filled', 'string', Rule::in(UserRole::values())],
             'avatar_url' => ['nullable', 'string'],
             'email' => ['filled', 'email'],
             'password' => ['filled', 'string', 'min:8'],

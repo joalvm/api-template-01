@@ -23,7 +23,7 @@ interface DocumentTypesInterface extends BaseInterface
      *
      * @param int $id
      */
-    public function find($id): Item;
+    public function find($id): ?Item;
 
     /**
      * Crea un recurso document_type.

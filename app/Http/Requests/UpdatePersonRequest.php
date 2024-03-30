@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\Gender;
 use App\Facades\Session;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Joalvm\Utils\Rules\AlphaSpaceRule;
@@ -28,8 +29,8 @@ class UpdatePersonRequest extends FormRequest
         return [
             'names' => ['filled', 'string', new AlphaSpaceRule()],
             'last_names' => ['filled', 'string', new AlphaSpaceRule()],
-            'gender' => ['filled', Rule::in(Gender::values())],
-            'document_type_id' => ['filled', 'integer'],
+            'gender' => ['filled', 'string', Rule::in(Gender::values())],
+            'document_type_id' => ['filled', 'integer', new IntegerPositiveRule()],
             'id_document' => ['filled', 'string'],
             'email' => ['nullable', 'string'],
         ];

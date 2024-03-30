@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Enums\CharType;
 use App\Enums\LengthType;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Validation\Rules\Enum;
 
 /**
@@ -49,7 +51,7 @@ class DocumentType extends Model
                 'required',
                 new Enum(LengthType::class),
             ],
-            'length' => ['required', 'integer'],
+            'length' => ['required', 'integer', new IntegerPositiveRule(2)],
             'char_type' => [
                 'required',
                 new Enum(CharType::class),
@@ -72,7 +74,7 @@ class DocumentType extends Model
             }
 
             if ($query->exists()) {
-                $fail('validation.unique')->translate(['value' => $value]);
+                $fail(Lang::get('validation.unique', ['attribute' => $attribute]));
             }
         };
     }

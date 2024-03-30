@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\CharType;
 use App\Enums\LengthType;
 use App\Facades\Session;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,9 +29,9 @@ class StoreDocumentTypeRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'abbr' => ['required', 'string'],
-            'length_type' => ['required', Rule::in(LengthType::values())],
-            'length' => ['required', 'integer', 'min:1', 'max:' . PHP_INT_MAX],
-            'char_type' => ['required', Rule::in(CharType::values())],
+            'length_type' => ['required', 'string', Rule::in(LengthType::values())],
+            'length' => ['required', 'integer', new IntegerPositiveRule(2)],
+            'char_type' => ['required', 'string', Rule::in(CharType::values())],
         ];
     }
 }

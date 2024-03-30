@@ -7,6 +7,7 @@ use App\Facades\Session;
 use App\Facades\User as FacadesUser;
 use App\Models\Model;
 use App\Models\Person;
+use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -88,6 +89,7 @@ class User extends Model
             'person_id' => [
                 'required',
                 'integer',
+                new IntegerPositiveRule(),
                 $this->ruleExistsPerson(),
                 $this->ruleUniquePersonId(),
             ],
