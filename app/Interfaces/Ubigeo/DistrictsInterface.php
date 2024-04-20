@@ -23,14 +23,14 @@ interface DistrictsInterface extends BaseInterface
      *
      * @param int $id
      */
-    public function find($id): ?Item;
+    public function find(mixed $id): ?Item;
 
     /**
      * Crea un recurso district.
      *
      * @throws ValidationException
      */
-    public function save(CreateDistrictData $data): District;
+    public function create(CreateDistrictData $data): District;
 
     /**
      * Actualiza un recurso district.
@@ -40,7 +40,7 @@ interface DistrictsInterface extends BaseInterface
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function update($id, UpdateDistrictData $data): District;
+    public function update(mixed $id, UpdateDistrictData $data): District;
 
     /**
      * Elimina un recurso district.
@@ -49,7 +49,7 @@ interface DistrictsInterface extends BaseInterface
      *
      * @throws ModelNotFoundException
      */
-    public function delete($id): bool;
+    public function delete(mixed $id): bool;
 
     /**
      * Obtiene el modelo del recurso district.
@@ -58,40 +58,40 @@ interface DistrictsInterface extends BaseInterface
      *
      * @throws ModelNotFoundException
      */
-    public function getModel($id): District;
+    public function getModel(mixed $id): District;
 
     /**
      * Establece el filtro por codigo ubigeo.
      *
-     * @param string|null $codes
+     * @param string[]|null $codes
      */
-    public function setCodes($codes): static;
+    public function setCodes(mixed $codes): static;
 
     /**
      * Establece el filtro por id de provincias.
      *
      * @param int[]|null $provinces
      */
-    public function setProvinces($provinces): static;
+    public function setProvinces(mixed $provinces): static;
 
     /**
      * Establece el filtro por codigo ubigeo de las provincias.
      *
      * @param string[]|null $provinceCodes
      */
-    public function setProvinceCodes($provinceCodes): static;
+    public function setProvinceCodes(mixed $provinceCodes): static;
 
     /**
      * Establece el filtro por id de departamentos.
      *
      * @param int[]|null $departments
      */
-    public function setDepartments($departments): static;
+    public function setDepartments(mixed $departments): static;
 
     /**
      * Establece el filtro por codigos de departmentos.
      *
      * @param string[]|null $departmentCodes
      */
-    public function setDepartmentCodes($departmentCodes): static;
+    public function setDepartmentCodes(mixed $departmentCodes): static;
 }

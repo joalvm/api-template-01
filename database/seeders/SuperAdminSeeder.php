@@ -6,7 +6,6 @@ use App\DataObjects\Repositories\CreatePersonData;
 use App\DataObjects\Repositories\Users\CreateUserData;
 use App\Enums\Gender;
 use App\Enums\UserRole;
-use App\Facades\User;
 use App\Interfaces\PersonsInterface;
 use App\Interfaces\Users\UsersInterface;
 use App\Models\Person;
@@ -21,7 +20,6 @@ class SuperAdminSeeder extends Seeder
         protected PersonsInterface $personsRepository,
         protected UsersInterface $usersRepository
     ) {
-        $this->personsRepository = $personsRepository;
     }
 
     /**
@@ -29,9 +27,6 @@ class SuperAdminSeeder extends Seeder
      */
     public function run()
     {
-        $this->usersRepository->loadUser(User::getFacadeRoot());
-        $this->personsRepository->loadUser(User::getFacadeRoot());
-
         $this->makeUser($this->makePerson());
     }
 
@@ -62,9 +57,8 @@ class SuperAdminSeeder extends Seeder
             'avatar_url' => $faker->imageUrl(75, 75),
             'password' => self::DEFAULT_PASSWORD,
             'confirm_password' => self::DEFAULT_PASSWORD,
-            'super_admin' => true,
         ]);
 
-        $this->usersRepository->save($data);
+        $this->usersRepository->create($data, true);
     }
 }

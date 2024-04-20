@@ -14,6 +14,9 @@ use Joalvm\Utils\Item;
 
 class DepartmentsRepository extends Repository implements DepartmentsInterface
 {
+    /**
+     * @var string[]
+     */
     protected array $codes = [];
 
     public function __construct(public Department $model)
@@ -25,12 +28,12 @@ class DepartmentsRepository extends Repository implements DepartmentsInterface
         return $this->builder()->all();
     }
 
-    public function find($id): ?Item
+    public function find(mixed $id): ?Item
     {
         return $this->builder()->find($id);
     }
 
-    public function save(CreateDepartmentData $data): Department
+    public function create(CreateDepartmentData $data): Department
     {
         $model = $this->model->newInstance($data->all());
 
@@ -39,7 +42,7 @@ class DepartmentsRepository extends Repository implements DepartmentsInterface
         return $model;
     }
 
-    public function update($id, UpdateDepartmentData $data): Department
+    public function update(mixed $id, UpdateDepartmentData $data): Department
     {
         $model = $this->getModel($id);
 
@@ -50,7 +53,7 @@ class DepartmentsRepository extends Repository implements DepartmentsInterface
         return $model;
     }
 
-    public function delete($id): bool
+    public function delete(mixed $id): bool
     {
         $model = $this->getModel($id);
 
@@ -61,12 +64,12 @@ class DepartmentsRepository extends Repository implements DepartmentsInterface
         return $model->delete();
     }
 
-    public function getModel($id): Department
+    public function getModel(mixed $id): Department
     {
         return $this->model->newQuery()->findOrFail(to_int($id));
     }
 
-    public function setCodes($codes): static
+    public function setCodes(mixed $codes): static
     {
         $this->codes = to_list($codes);
 

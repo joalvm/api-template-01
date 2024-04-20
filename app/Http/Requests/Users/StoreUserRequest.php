@@ -15,7 +15,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Session::isAuthenticated() and !Session::isUserBasic();
+        return Session::isAuthenticated();
     }
 
     /**
@@ -33,13 +33,6 @@ class StoreUserRequest extends FormRequest
             'confirm_password' => ['required_with:password', 'same:password'],
             'avatar_url' => ['filled', 'string'],
             'enabled' => ['filled', 'boolean'],
-            'super_admin' => [
-                'filled',
-                'boolean',
-                'exclude_if:role,' . UserRole::USER->value,
-                'exclude_if:role,' . UserRole::ADMIN->value,
-                Rule::excludeIf(fn () => !Session::isSuperAdmin()),
-            ],
             'redirect_url' => ['filled', 'string'],
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Ubigeo;
 
+use App\Models\Ubigeo\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +23,7 @@ class ProvinceFactory extends Factory
 
         return [
             'name' => $this->faker->text(20),
-            'department_id' => DepartmentFactory::new()->create()->id,
+            'department_id' => Department::factory(),
             'code' => (string) $this->faker->unique()->numberBetween(1000, 9999),
             'latitude' => $this->faker->latitude,
             'longitude' => $this->faker->longitude,

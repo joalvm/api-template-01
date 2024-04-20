@@ -6,7 +6,6 @@ use App\DataObjects\Repositories\Users\CreateUserData;
 use App\DataObjects\Repositories\Users\UpdateUserData;
 use App\DataObjects\Repositories\Users\UpdateUserEmailData;
 use App\DataObjects\Repositories\Users\UpdateUserPasswordData;
-use App\Facades\Session;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
@@ -17,8 +16,6 @@ use App\Jobs\SendPasswordChangeNotificationJob;
 use App\Models\User\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Facades\Response;
 
 class UsersController extends Controller
@@ -41,7 +38,7 @@ class UsersController extends Controller
     {
         $data = CreateUserData::from($request->post());
 
-        $userModel = $this->repository->save($data);
+        $userModel = $this->repository->create($data);
 
         dispatch(
             new SendNewUserWelcomeEmailJob(
@@ -72,10 +69,6 @@ class UsersController extends Controller
 
     public function destroy($id): JsonResponse
     {
-        if (Session::isUserBasic()) {
-            throw new ForbiddenException();
-        }
-
         return Response::destroyed($this->repository->delete($id));
     }
 

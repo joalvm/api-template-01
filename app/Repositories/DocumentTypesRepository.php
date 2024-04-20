@@ -36,7 +36,7 @@ class DocumentTypesRepository extends Repository implements DocumentTypesInterfa
         return $this->builder()->find($id);
     }
 
-    public function save(CreateDocumentTypeData $data): DocumentType
+    public function create(CreateDocumentTypeData $data): DocumentType
     {
         $model = $this->model->newInstance($data->all());
 
@@ -45,7 +45,7 @@ class DocumentTypesRepository extends Repository implements DocumentTypesInterfa
         return $model;
     }
 
-    public function update($id, UpdateDocumentTypeData $data): DocumentType
+    public function update(mixed $id, UpdateDocumentTypeData $data): DocumentType
     {
         $model = $this->getModel($id);
 

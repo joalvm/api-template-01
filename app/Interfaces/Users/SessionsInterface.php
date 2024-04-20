@@ -20,12 +20,12 @@ interface SessionsInterface extends BaseInterface
      *
      * @throws ValidationException
      */
-    public function save(CreateSessionData $data): Session;
+    public function create(CreateSessionData $data): Session;
 
     /**
      * Obtiene el profile del usuario.
      */
-    public function profile(): ?Item;
+    public function profile(int $userId): ?Item;
 
     /**
      * Crea una session para un usuario con autorización.

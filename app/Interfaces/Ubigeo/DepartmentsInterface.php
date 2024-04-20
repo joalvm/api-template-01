@@ -4,12 +4,12 @@ namespace App\Interfaces\Ubigeo;
 
 use App\DataObjects\Repositories\Ubigeo\CreateDepartmentData;
 use App\DataObjects\Repositories\Ubigeo\UpdateDepartmentData;
+use App\Exceptions\Ubigeo\CannotDeleteDepartmentWithProvincesException;
 use App\Interfaces\BaseInterface;
 use App\Models\Ubigeo\Department;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Joalvm\Utils\Collection;
-use Joalvm\Utils\Exceptions\NotAcceptableException;
 use Joalvm\Utils\Item;
 
 interface DepartmentsInterface extends BaseInterface
@@ -24,14 +24,14 @@ interface DepartmentsInterface extends BaseInterface
      *
      * @param int $id
      */
-    public function find($id): ?Item;
+    public function find(mixed $id): ?Item;
 
     /**
      * Crea un recurso department.
      *
      * @throws ValidationException
      */
-    public function save(CreateDepartmentData $data): Department;
+    public function create(CreateDepartmentData $data): Department;
 
     /**
      * Actualiza un recurso department.
@@ -41,7 +41,7 @@ interface DepartmentsInterface extends BaseInterface
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function update($id, UpdateDepartmentData $data): Department;
+    public function update(mixed $id, UpdateDepartmentData $data): Department;
 
     /**
      * Elimina un recurso department.
@@ -49,9 +49,9 @@ interface DepartmentsInterface extends BaseInterface
      * @param int $id
      *
      * @throws ModelNotFoundException
-     * @throws NotAcceptableException
+     * @throws CannotDeleteDepartmentWithProvincesException
      */
-    public function delete($id): bool;
+    public function delete(mixed $id): bool;
 
     /**
      * Obtiene el modelo del recurso department.
@@ -60,12 +60,12 @@ interface DepartmentsInterface extends BaseInterface
      *
      * @throws ModelNotFoundException
      */
-    public function getModel($id): Department;
+    public function getModel(mixed $id): Department;
 
     /**
      * Establece el filtro por codigo ubigeo.
      *
      * @param string[]|null $codes
      */
-    public function setCodes($codes): static;
+    public function setCodes(mixed $codes): static;
 }

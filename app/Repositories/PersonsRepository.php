@@ -5,10 +5,8 @@ namespace App\Repositories;
 use App\DataObjects\Repositories\CreatePersonData;
 use App\DataObjects\Repositories\UpdatePersonData;
 use App\Enums\Gender;
-use App\Events\DeletingPersonEvent;
 use App\Interfaces\PersonsInterface;
 use App\Models\Person;
-use Illuminate\Support\Facades\DB;
 use Joalvm\Utils\Builder;
 use Joalvm\Utils\Collection;
 use Joalvm\Utils\Item;
@@ -36,12 +34,12 @@ class PersonsRepository extends Repository implements PersonsInterface
         return $this->builder()->all();
     }
 
-    public function find($id): ?Item
+    public function find(mixed $id): ?Item
     {
         return $this->builder()->find($id);
     }
 
-    public function save(CreatePersonData $data): Person
+    public function create(CreatePersonData $data): Person
     {
         $model = $this->model->newInstance($data->all());
 
@@ -50,7 +48,7 @@ class PersonsRepository extends Repository implements PersonsInterface
         return $model;
     }
 
-    public function update($id, UpdatePersonData $data): Person
+    public function update(mixed $id, UpdatePersonData $data): Person
     {
         $model = $this->getModel($id)->fill($data->all());
 
@@ -59,22 +57,12 @@ class PersonsRepository extends Repository implements PersonsInterface
         return $model;
     }
 
-    public function delete($id): bool
+    public function delete(mixed $id): bool
     {
-        $model = $this->getModel($id);
-
-        DB::beginTransaction();
-
-        DeletingPersonEvent::dispatch($model, $this->user->isSuperAdmin());
-
-        $result = $model->delete();
-
-        DB::commit();
-
-        return $result;
+        return $this->getModel($id)->delete();
     }
 
-    public function getModel($id): Person
+    public function getModel(mixed $id): Person
     {
         return $this->model->newQuery()->findOrFail(to_int($id));
     }
@@ -86,7 +74,7 @@ class PersonsRepository extends Repository implements PersonsInterface
         return $this;
     }
 
-    public function setGender($gender): static
+    public function setGender(mixed $gender): static
     {
         if (Gender::has($gender)) {
             $this->gender = Gender::get($gender);
@@ -95,7 +83,7 @@ class PersonsRepository extends Repository implements PersonsInterface
         return $this;
     }
 
-    public function setIdDocuments($idDocuments): static
+    public function setIdDocuments(mixed $idDocuments): static
     {
         $this->idDocuments = to_list($idDocuments);
 

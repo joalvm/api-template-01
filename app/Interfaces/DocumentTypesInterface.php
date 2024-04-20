@@ -31,7 +31,7 @@ interface DocumentTypesInterface extends BaseInterface
      * @throws ValidationException
      * @throws ForbiddenException
      */
-    public function save(CreateDocumentTypeData $data): DocumentType;
+    public function create(CreateDocumentTypeData $data): DocumentType;
 
     /**
      * Actualiza un recurso document_type.

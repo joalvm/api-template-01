@@ -17,8 +17,6 @@ class CreateUserData extends Data
         public UserRole $role = UserRole::USER,
         #[MapName('avatar_url')]
         public ?string $avatarUrl = null,
-        #[MapName('super_admin')]
-        public bool|Optional $superAdmin = false,
     ) {
     }
 }

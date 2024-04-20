@@ -30,7 +30,7 @@ class SessionsRepository extends Repository implements SessionsInterface
     ) {
     }
 
-    public function save(CreateSessionData $data): Session
+    public function create(CreateSessionData $data): Session
     {
         $model = $this->model->newInstance($data->all());
 
@@ -39,13 +39,13 @@ class SessionsRepository extends Repository implements SessionsInterface
         return $model;
     }
 
-    public function profile(): ?Item
+    public function profile(int $userId): ?Item
     {
         return Builder::table('public.persons', 'p')
             ->schema($this->profileSchema())
             ->join('public.document_types as dt', 'dt.id', 'p.document_type_id')
             ->join('public.users as u', 'u.person_id', 'p.id')
-            ->where('u.id', $this->user->id())
+            ->where('u.id', $userId)
             ->whereNull(['p.deleted_at', 'u.deleted_at'])
             ->first()
         ;
@@ -57,9 +57,7 @@ class SessionsRepository extends Repository implements SessionsInterface
 
         DB::beginTransaction();
 
-        $sessionModel = $this->save(
-            $this->getSessionData($userModel->id, $data)
-        );
+        $sessionModel = $this->create($this->getData($userModel->id, $data));
 
         $this->handleJwtToken($sessionModel, $userModel, $data->host);
 
@@ -97,10 +95,11 @@ class SessionsRepository extends Repository implements SessionsInterface
         return $auth;
     }
 
-    private function getSessionData(
-        int $userId,
-        LoginSessionData $data,
-    ): CreateSessionData {
+    /**
+     * Obtiene los datos para crear una session.
+     */
+    private function getData(int $userId, LoginSessionData $data): CreateSessionData
+    {
         $now = Carbon::now();
 
         $now->addDays($data->rememberMe ? 30 : 1);

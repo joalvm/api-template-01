@@ -4,12 +4,12 @@ namespace App\Interfaces\Ubigeo;
 
 use App\DataObjects\Repositories\Ubigeo\CreateProvinceData;
 use App\DataObjects\Repositories\Ubigeo\UpdateProvinceData;
+use App\Exceptions\Ubigeo\CannotDeleteProvinceWithDistrictsException;
 use App\Interfaces\BaseInterface;
 use App\Models\Ubigeo\Province;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Joalvm\Utils\Collection;
-use Joalvm\Utils\Exceptions\NotAcceptableException;
 use Joalvm\Utils\Item;
 
 interface ProvincesInterface extends BaseInterface
@@ -24,14 +24,14 @@ interface ProvincesInterface extends BaseInterface
      *
      * @param int $id
      */
-    public function find($id): ?Item;
+    public function find(mixed $id): ?Item;
 
     /**
      * Crea un recurso province.
      *
      * @throws ValidationException
      */
-    public function save(CreateProvinceData $data): Province;
+    public function create(CreateProvinceData $data): Province;
 
     /**
      * Actualiza un recurso province.
@@ -41,7 +41,7 @@ interface ProvincesInterface extends BaseInterface
      * @throws ValidationException
      * @throws ModelNotFoundException
      */
-    public function update($id, UpdateProvinceData $data): Province;
+    public function update(mixed $id, UpdateProvinceData $data): Province;
 
     /**
      * Elimina un recurso province.
@@ -49,9 +49,9 @@ interface ProvincesInterface extends BaseInterface
      * @param int $id
      *
      * @throws ModelNotFoundException
-     * @throws NotAcceptableException
+     * @throws CannotDeleteProvinceWithDistrictsException
      */
-    public function delete($id): bool;
+    public function delete(mixed $id): bool;
 
     /**
      * Obtiene el modelo province.
@@ -60,26 +60,26 @@ interface ProvincesInterface extends BaseInterface
      *
      * @throws ModelNotFoundException
      */
-    public function getModel($id): Province;
+    public function getModel(mixed $id): Province;
 
     /**
      * Establece el filtro por codigo ubigeo.
      *
      * @param string[]|null $codes
      */
-    public function setCodes($codes): static;
+    public function setCodes(mixed $codes): static;
 
     /**
      * Establece el filtro por id de departamentos.
      *
      * @param int[]|null $departments
      */
-    public function setDepartments($departments): static;
+    public function setDepartments(mixed $departments): static;
 
     /**
      * Establece el filtro por codigos de departmentos.
      *
      * @param string[]|null $departmentCodes
      */
-    public function setDepartmentCodes($departmentCodes): static;
+    public function setDepartmentCodes(mixed $departmentCodes): static;
 }

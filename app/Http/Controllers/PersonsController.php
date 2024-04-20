@@ -5,14 +5,12 @@ namespace App\Http\Controllers;
 use App\DataObjects\Repositories\CreatePersonData;
 use App\DataObjects\Repositories\UpdatePersonData;
 use App\Exceptions\Users\CannotDeleteSelfUserException;
-use App\Facades\Session;
 use App\Facades\User;
 use App\Http\Requests\StorePersonRequest;
 use App\Http\Requests\UpdatePersonRequest;
 use App\Interfaces\PersonsInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Joalvm\Utils\Exceptions\ForbiddenException;
 use Joalvm\Utils\Facades\Response;
 
 class PersonsController extends Controller
@@ -38,7 +36,7 @@ class PersonsController extends Controller
 
         return Response::stored(
             $this->repository->find(
-                $this->repository->save($data)->id
+                $this->repository->create($data)->id
             )
         );
     }
@@ -76,10 +74,6 @@ class PersonsController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        if (Session::isUserBasic()) {
-            throw new ForbiddenException();
-        }
-
         if ($id === User::id()) {
             throw new CannotDeleteSelfUserException();
         }

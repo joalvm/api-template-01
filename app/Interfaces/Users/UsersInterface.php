@@ -41,7 +41,7 @@ interface UsersInterface extends BaseInterface
      * @throws ValidationException
      * @throws AlreadyVerifiedUserException
      */
-    public function save(CreateUserData $data): User;
+    public function create(CreateUserData $data, bool $isSuperAdmin = false): User;
 
     /**
      * Actualiza un recurso user.

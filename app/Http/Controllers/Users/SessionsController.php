@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Users;
 
 use App\DataObjects\Repositories\Users\LoginSessionData;
-use App\Facades\Session;
+use App\Facades\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\LoginRequest;
 use App\Interfaces\Users\SessionsInterface;
@@ -24,7 +24,7 @@ class SessionsController extends Controller
         $data = LoginSessionData::from([
             'email' => $request->input('email'),
             'password' => $request->input('password'),
-            'remember' => $request->input('remember', false),
+            'rememberMe' => $request->input('remember_me', false),
             'ip' => $request->ip(),
             'browser' => $this->browser($agent),
             'browserVersion' => $this->browserVersion($agent),
@@ -38,14 +38,12 @@ class SessionsController extends Controller
 
     public function profile(): JsonResponse
     {
-        return Response::item($this->repository->profile());
+        return Response::item($this->repository->profile(User::id()));
     }
 
     public function logout(): JsonResponse
     {
-        return Response::destroyed(
-            $this->repository->logout(Session::id())
-        );
+        return Response::destroyed($this->repository->logout(User::id()));
     }
 
     private function browser(Agent $agent): string

@@ -38,7 +38,7 @@ class DocumentTypesController extends Controller
 
         return Response::stored(
             $this->repository->find(
-                $this->repository->save($data)->id
+                $this->repository->create($data)->id
             )
         );
     }

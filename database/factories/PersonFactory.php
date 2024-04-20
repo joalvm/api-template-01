@@ -25,13 +25,11 @@ class PersonFactory extends Factory
         $fake = fake('es_PE');
         $gender = Gender::random();
 
-        $documentType = DocumentType::factory()->create();
-
         return [
             'names' => $this->getName($gender, $fake),
-            'last_names' => $fake->lastName(),
+            'last_names' => preg_replace('/[^a-zA-Z ]/', '', $fake->lastName()),
             'gender' => $gender,
-            'document_type_id' => $documentType->id,
+            'document_type_id' => DocumentType::factory(),
             'id_document' => $fake->unique()->dni(),
             'email' => $fake->email(),
         ];

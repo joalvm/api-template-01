@@ -38,12 +38,12 @@ class ProvincesRepository extends Repository implements ProvincesInterface
         return $this->builder()->all();
     }
 
-    public function find($id): ?Item
+    public function find(mixed $id): ?Item
     {
         return $this->builder()->find($id);
     }
 
-    public function save(CreateProvinceData $data): Province
+    public function create(CreateProvinceData $data): Province
     {
         $model = $this->model->newInstance($data->all());
 
@@ -52,7 +52,7 @@ class ProvincesRepository extends Repository implements ProvincesInterface
         return $model;
     }
 
-    public function update($id, UpdateProvinceData $data): Province
+    public function update(mixed $id, UpdateProvinceData $data): Province
     {
         $model = $this->getModel($id);
 
@@ -63,7 +63,7 @@ class ProvincesRepository extends Repository implements ProvincesInterface
         return $model;
     }
 
-    public function delete($id): bool
+    public function delete(mixed $id): bool
     {
         $model = $this->getModel($id);
 
@@ -74,26 +74,26 @@ class ProvincesRepository extends Repository implements ProvincesInterface
         return $model->delete();
     }
 
-    public function getModel($id): Province
+    public function getModel(mixed $id): Province
     {
         return $this->model->newQuery()->findOrFail(to_int($id));
     }
 
-    public function setCodes($codes): static
+    public function setCodes(mixed $codes): static
     {
         $this->codes = to_list($codes);
 
         return $this;
     }
 
-    public function setDepartments($departments): static
+    public function setDepartments(mixed $departments): static
     {
         $this->departments = to_list_int($departments);
 
         return $this;
     }
 
-    public function setDepartmentCodes($departmentCodes): static
+    public function setDepartmentCodes(mixed $departmentCodes): static
     {
         $this->departmentCodes = to_list($departmentCodes);
 

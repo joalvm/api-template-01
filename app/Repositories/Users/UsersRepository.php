@@ -52,7 +52,7 @@ class UsersRepository extends Repository implements UsersInterface
         return $this->builder()->where('u.email', $email)->first();
     }
 
-    public function save(CreateUserData $data): User
+    public function create(CreateUserData $data, bool $isSuperAdmin = false): User
     {
         $model = $this->model->newInstance($data->except('password')->all());
 
@@ -62,6 +62,10 @@ class UsersRepository extends Repository implements UsersInterface
 
         $this->handlePassword($data->password, $model);
         $this->handleVerificationToken($model);
+
+        if ($isSuperAdmin) {
+            $model->setAttribute('super_admin', true);
+        }
 
         $model->validate()->save();
 

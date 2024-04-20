@@ -47,12 +47,12 @@ class DistrictsRepository extends Repository implements DistrictsInterface
         return $this->builder()->all();
     }
 
-    public function find($id): ?Item
+    public function find(mixed $id): ?Item
     {
         return $this->builder()->find($id);
     }
 
-    public function save(CreateDistrictData $data): District
+    public function create(CreateDistrictData $data): District
     {
         $model = $this->model->newInstance($data->all());
 
@@ -61,7 +61,7 @@ class DistrictsRepository extends Repository implements DistrictsInterface
         return $model;
     }
 
-    public function update($id, UpdateDistrictData $data): District
+    public function update(mixed $id, UpdateDistrictData $data): District
     {
         $model = $this->getModel($id);
 
@@ -72,45 +72,45 @@ class DistrictsRepository extends Repository implements DistrictsInterface
         return $model;
     }
 
-    public function delete($id): bool
+    public function delete(mixed $id): bool
     {
         return $this->getModel($id)->delete();
     }
 
-    public function getModel($id): District
+    public function getModel(mixed $id): District
     {
         return $this->model->newQuery()->findOrFail(to_int($id));
     }
 
-    public function setCodes($codes): static
+    public function setCodes(mixed $codes): static
     {
         $this->codes = to_list($codes);
 
         return $this;
     }
 
-    public function setProvinces($provinces): static
+    public function setProvinces(mixed $provinces): static
     {
         $this->provinces = to_list_int($provinces);
 
         return $this;
     }
 
-    public function setProvinceCodes($provinceCodes): static
+    public function setProvinceCodes(mixed $provinceCodes): static
     {
         $this->provinceCodes = to_list($provinceCodes);
 
         return $this;
     }
 
-    public function setDepartments($departments): static
+    public function setDepartments(mixed $departments): static
     {
         $this->departments = to_list_int($departments);
 
         return $this;
     }
 
-    public function setDepartmentCodes($departmentCodes): static
+    public function setDepartmentCodes(mixed $departmentCodes): static
     {
         $this->departmentCodes = to_list($departmentCodes);
 
