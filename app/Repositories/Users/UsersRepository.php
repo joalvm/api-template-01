@@ -63,9 +63,7 @@ class UsersRepository extends Repository implements UsersInterface
         $this->handlePassword($data->password, $model);
         $this->handleVerificationToken($model);
 
-        if ($isSuperAdmin) {
-            $model->setAttribute('super_admin', true);
-        }
+        $model->setAttribute('super_admin', $isSuperAdmin);
 
         $model->validate()->save();
 
