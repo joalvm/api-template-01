@@ -59,7 +59,13 @@ class PersonsRepository extends Repository implements PersonsInterface
 
     public function delete(mixed $id): bool
     {
-        return $this->getModel($id)->delete();
+        $model = $this->getModel($id);
+
+        if ($result = $model->delete()) {
+            $model->user()->delete();
+        }
+
+        return $result;
     }
 
     public function getModel(mixed $id): Person
