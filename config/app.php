@@ -170,7 +170,6 @@ return [
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Cookie\CookieServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
-        Illuminate\Mail\MailServiceProvider::class,
         Illuminate\Notifications\NotificationServiceProvider::class,
         Illuminate\Pagination\PaginationServiceProvider::class,
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,

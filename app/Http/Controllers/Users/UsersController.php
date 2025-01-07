@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\DataObjects\Repositories\CreatePersonData;
 use App\DataObjects\Repositories\Users\CreateUserData;
 use App\DataObjects\Repositories\Users\UpdateUserData;
 use App\DataObjects\Repositories\Users\UpdateUserEmailData;
@@ -9,6 +10,7 @@ use App\DataObjects\Repositories\Users\UpdateUserPasswordData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
+use App\Interfaces\PersonsInterface;
 use App\Interfaces\Users\UsersInterface;
 use App\Jobs\SendEmailVerificationOnEmailChangeJob;
 use App\Jobs\SendNewUserWelcomeEmailJob;
@@ -16,12 +18,15 @@ use App\Jobs\SendPasswordChangeNotificationJob;
 use App\Models\User\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Joalvm\Utils\Facades\Response;
 
 class UsersController extends Controller
 {
-    public function __construct(protected UsersInterface $repository)
-    {
+    public function __construct(
+        protected UsersInterface $repository,
+        protected PersonsInterface $personsRepository
+    ) {
     }
 
     public function index(Request $request): JsonResponse
@@ -36,9 +41,20 @@ class UsersController extends Controller
 
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $data = CreateUserData::from($request->post());
+        $input = $request->all();
+
+        DB::beginTransaction();
+
+        if ($request->has('person')) {
+            $personData = CreatePersonData::from($input['person']);
+            $input['person_id'] = $this->personsRepository->create($personData)->id;
+        }
+
+        $data = CreateUserData::from($input);
 
         $userModel = $this->repository->create($data);
+
+        DB::commit();
 
         dispatch(
             new SendNewUserWelcomeEmailJob(

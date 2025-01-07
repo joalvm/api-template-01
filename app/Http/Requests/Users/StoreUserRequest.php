@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\Users;
 
-use App\Enums\UserRole;
+use App\Enums\Gender;
 use App\Facades\Session;
 use App\Rules\Pgsql\IntegerPositiveRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Joalvm\Utils\Rules\AlphaSpaceRule;
 
 class StoreUserRequest extends FormRequest
 {
@@ -27,13 +28,21 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'person_id' => ['required_without:person', 'integer', new IntegerPositiveRule()],
-            'role' => ['filled', 'string', Rule::in(UserRole::values())],
             'email' => ['required', 'email:rfc,dns'],
             'password' => ['filled', 'string', 'min:8'],
             'confirm_password' => ['required_with:password', 'same:password'],
             'avatar_url' => ['filled', 'string'],
             'enabled' => ['filled', 'boolean'],
             'redirect_url' => ['filled', 'string'],
+            'person' => [
+                'required_without:person_id',
+                'array:names,last_names,gender,document_type_id,id_document',
+            ],
+            'person.names' => ['required_with:person', 'string', new AlphaSpaceRule()],
+            'person.last_names' => ['required_with:person', 'string', new AlphaSpaceRule()],
+            'person.gender' => ['required_with:person', 'string', Rule::in(Gender::values())],
+            'person.document_type_id' => ['required_with:person', 'integer', new IntegerPositiveRule()],
+            'person.id_document' => ['required_with:person', 'string'],
         ];
     }
 }

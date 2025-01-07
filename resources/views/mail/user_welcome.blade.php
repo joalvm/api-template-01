@@ -1,88 +1,127 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido a Nuestra Empresa</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1abc9c;
-            color: #222;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 30px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .logo {
-            margin-bottom: 20px;
-        }
-        .logo img {
-            max-width: 150px;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        p {
-            margin-bottom: 20px;
-        }
-        .credentials {
-            padding: 20px;
-            border-radius: 5px;
-            text-align: left;
-            margin-bottom: 20px;
-        }
-        .message {
-            text-align: center;
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
-        .credentials h3 {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        .credentials ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .credentials ul li {
-            margin-bottom: 10px;
-        }
-        .btn {
-            display: inline-block;
-            background-color: #1abc9c;
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="logo">
-            <img src="{{ $message->embed(public_path('logo.png')) }}" alt="Logo de la Empresa">
-        </div>
-        <div class="message">
-            <h1>¡Hola {{ $user->person->names }}!</h1>
-            <p>Bienvenido a {{ Config::get('app.name') }}. Estamos muy contentos de tenerte a bordo.</p>
-        </div>
-        <div class="credentials">
-            <h3>Tus credenciales de acceso:</h3>
-            <ul>
-                <li><strong>Usuario:</strong> {{ $user->email }}</li>
-                <li><strong>Contraseña:</strong> {{ $user->realPassword }}</li>
-            </ul>
-        </div>
-        <a href="{{ $redirectUrl }}" class="btn">Ir a la Página Principal</a>
-    </div>
-</body>
-</html>
+<div
+  style="font-family: Roboto, Tahoma, Verdana, Segoe, Arial, sans-serif;margin: 20px 0;padding: 0;background: #f0f0f0;color: #333;">
+  <div
+    style="max-width: 600px;margin: 2% auto 0 auto;background: #fff;border-radius: 8px;border: 1px solid #ccc;">
+    <table style="border-collapse: collapse; border-spacing: 0; width: 100%; border: none;">
+      <tr id="header">
+        <td style="padding: 0; border: none;">
+          <table
+            style="border-collapse: collapse; border-spacing: 0; width: 100%; border: none; text-align: center; height: 150px; border-radius: 8px 8px 0 0; background-color:#0d68ec;">
+            <tr>
+              <td style="padding: 0; border: none;">
+                <img src="{{ $message->embed(public_path('logo.png')) }}"
+                  alt="Logotipo de {{ Config::get('app.name') }}"
+                  style="max-width: 200px; margin: 0 auto;" />
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr id="content">
+        <td style="padding: 0; border: none;">
+          <table
+            style="border-collapse: collapse; border-spacing: 0; width: 100%; border: none; max-width: 75%; margin: 20px auto; font-size: 14px;">
+            <tr>
+              <td style="padding: 0; border: none;">
+                <table
+                  style="border-collapse: collapse; border-spacing: 0; width: 100%; border: none; line-height: 1.5; margin: 20px auto;">
+                  <tr>
+                    <td style="padding: 0; border: none;">
+                      <h1 style="margin: 0; font-size: 32px; font-weight: bold; margin-bottom: 20px;">
+                        Bienvenido a {{ Config::get('app.name') }}!
+                      </h1>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0; border: none;">
+                      <p style="margin: 0; font-size: 16px;">
+                        Hola <b>{{ $user->person->names }}</b>,<br>
+                        ¡Estamos muy contentos de tenerte a bordo!
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 0; border: none;">
+                <hr style="border: 0; border-top: 2px solid #f0f0f0; margin: 0;">
+              </td>
+            <tr>
+              <td style="padding: 0; border: none;">
+                <table
+                  style="margin: 20px auto; border-collapse: collapse; border-spacing: 0; width: 100%; border: none; font-size: 14px">
+                  <tr>
+                    <td style="padding: 0; border: none; padding: 5px 0;" colspan="2">
+                      <p style="margin: 0; margin-bottom: 25px;font-weight: bold;font-size: 16px;">Aquí tus
+                        datos de acceso:
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0; border: none; padding: 5px 0;">
+                      <p style="margin: 0; font-weight: bold; color: #656565;" class="label">Email</p>
+                    </td>
+                    <td style="padding: 0; border: none; padding: 5px 0;">{{ $user->email }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0; border: none; padding: 5px 0;">
+                      <p style="margin: 0; font-weight: bold; color: #656565;" class="label">Contraseña</p>
+                    </td>
+                    <td style="padding: 0; border: none; padding: 5px 0;">{{ $user->realPassword }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0; border: none; padding: 5px 0;" colspan="2">
+                      <table
+                        style="margin: 20px auto; border-collapse: collapse; border-spacing: 0; width: 100%; border: none; margin-bottom: 0;">
+                        <tr>
+                          <td style="padding: 0; border: none; padding: 5px 0;">
+                            <a href="{{ $redirectUrl }}" role="button"
+                              style="display: inline-block; height: 36px; padding: 0 24px; font-weight: bold; line-height: 36px; background: #0d68ec; color: #fff; text-decoration: none; border-radius: 5px;">
+                              Iniciar sesión ahora</a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 0; border: none;">
+                <hr style="border: 0; border-top: 2px solid #f0f0f0; margin: 0;">
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr id="footer">
+        <td style="padding: 0; border: none;">
+          <table
+            style="margin: 20px auto; border-collapse: collapse; border-spacing: 0; width: 100%; border: none; text-align: center;">
+            <tr>
+              <td style="padding: 0; border: none;">
+                <p style="margin: 0; font-size: 12px; color: #999;" class="contact-info">
+                  ¿Preguntas? Responde a este correo electrónico o ponte en contacto con nosotros en
+                  <br>
+                  <a href="mailto:support@ballparkapp.com" class="contact-link"
+                    style="font-weight: lighter; color: #007bff; text-decoration: none;">support@ballparkapp.com</a>.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <table style="border-collapse: collapse; border-spacing: 0; width: 100%; border: none;">
+      <tr>
+        <td style="padding: 0; border: none;">
+          <p style="margin: 0; font-size: 12px; color: #999; margin-top: 20px; text-align: center; margin-bottom: -25px;"
+            class="copyright">
+            © 2023 {{ Config::get('app.name') }}. Todos los derechos reservados.
+          </p>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

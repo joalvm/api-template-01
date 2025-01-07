@@ -26,7 +26,7 @@ fi
 # Cargo las variables de entorno
 source .env
 
-IMAGE_NAME=$APP_NAME:php8.1-apache
+IMAGE_NAME=$APP_NAME:php8.2-apache
 NETWORK_NAME=$APP_NAME-net
 API_CONTAINER_NAME=$APP_NAME-api
 DB_CONTAINER_NAME=$APP_NAME-db

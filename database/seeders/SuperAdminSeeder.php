@@ -43,7 +43,7 @@ class SuperAdminSeeder extends Seeder
             'email' => self::DEFAULT_EMAIL,
         ]);
 
-        return $this->personsRepository->save($data);
+        return $this->personsRepository->create($data);
     }
 
     private function makeUser(Person $person): void
